@@ -30,11 +30,12 @@ class PaperController extends Controller
             $query->where('status', $request->status);
         }
 
-        if ($request->has('search')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
-                  ->orWhere('abstract', 'like', '%' . $request->search . '%')
-                  ->orWhere('keywords', 'like', '%' . $request->search . '%');
+        if ($request->filled('search')) {
+            $searchTerm = strtolower($request->search);
+            $query->where(function ($q) use ($searchTerm) {
+                $q->whereRaw('LOWER(title) LIKE ?', ['%' . $searchTerm . '%'])
+                  ->orWhereRaw('LOWER(abstract) LIKE ?', ['%' . $searchTerm . '%'])
+                  ->orWhereRaw('LOWER(keywords) LIKE ?', ['%' . $searchTerm . '%']);
             });
         }
 
@@ -48,11 +49,12 @@ class PaperController extends Controller
         $query = Paper::with(['author', 'coAuthors'])
             ->where('status', 'published');
 
-        if ($request->has('search')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
-                  ->orWhere('abstract', 'like', '%' . $request->search . '%')
-                  ->orWhere('keywords', 'like', '%' . $request->search . '%');
+        if ($request->filled('search')) {
+            $searchTerm = strtolower($request->search);
+            $query->where(function ($q) use ($searchTerm) {
+                $q->whereRaw('LOWER(title) LIKE ?', ['%' . $searchTerm . '%'])
+                  ->orWhereRaw('LOWER(abstract) LIKE ?', ['%' . $searchTerm . '%'])
+                  ->orWhereRaw('LOWER(keywords) LIKE ?', ['%' . $searchTerm . '%']);
             });
         }
 
