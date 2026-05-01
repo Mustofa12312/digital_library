@@ -22,19 +22,19 @@ export default {
           950: '#003d01',
         },
         secondary: {
-          DEFAULT: '#427A43',
-          light: '#5a9c5c',
-          dark: '#2d5c2e',
+          DEFAULT: '#0F172A',
+          light: '#334155',
+          dark: '#020617',
         },
         accent: {
-          DEFAULT: '#C0B87A',
-          light: '#d4ce9e',
-          dark: '#a09a52',
+          DEFAULT: '#10B981',
+          light: '#34D399',
+          dark: '#059669',
         },
         background: {
-          DEFAULT: '#F2E3BB',
-          dark: '#e8d4a0',
-          card: '#faf6ee',
+          DEFAULT: '#F8FAFC',
+          dark: '#E2E8F0',
+          card: '#FFFFFF',
         },
       },
       fontFamily: {
