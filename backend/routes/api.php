@@ -13,6 +13,10 @@ Route::post('/login', [AuthController::class, 'login']);
 // Public papers listing (published only)
 Route::get('/publications', [PaperController::class, 'publicIndex']);
 Route::get('/publications/{paper}', [PaperController::class, 'show']);
+Route::get('/publications/{paper}/download', [PaperController::class, 'download']);
+
+// Public Settings Route
+Route::get('/settings', [\App\Http\Controllers\Api\SystemController::class, 'getSettings']);
 
 // Protected routes
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -27,6 +31,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Papers - Author & above
     Route::get('/papers', [PaperController::class, 'index']);
     Route::get('/papers/{paper}', [PaperController::class, 'show']);
+    Route::get('/papers/{paper}/download', [PaperController::class, 'download']);
     Route::post('/papers', [PaperController::class, 'store'])
         ->middleware('role:author,admin,super_admin');
     Route::post('/papers/{paper}', [PaperController::class, 'update'])
@@ -60,4 +65,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Get available reviewers (Admin only)
     Route::get('/reviewers', [UserController::class, 'reviewers'])
         ->middleware('role:admin,super_admin');
+
+    // System Management (Super Admin only)
+    Route::post('/settings', [\App\Http\Controllers\Api\SystemController::class, 'updateSettings'])
+        ->middleware('role:super_admin');
+    Route::get('/system/backup', [\App\Http\Controllers\Api\SystemController::class, 'downloadBackup'])
+        ->middleware('role:super_admin');
 });

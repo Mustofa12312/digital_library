@@ -81,7 +81,7 @@ class PaperController extends Controller
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $fileName = $file->getClientOriginalName();
-            $filePath = $file->store('papers', 'public');
+            $filePath = $file->store('papers', 'local');
         }
 
         $paper = Paper::create([
@@ -148,11 +148,11 @@ class PaperController extends Controller
 
         if ($request->hasFile('file')) {
             if ($paper->file_path) {
-                Storage::disk('public')->delete($paper->file_path);
+                Storage::disk('local')->delete($paper->file_path);
             }
             $file = $request->file('file');
             $paper->file_name = $file->getClientOriginalName();
-            $paper->file_path = $file->store('papers', 'public');
+            $paper->file_path = $file->store('papers', 'local');
             $paper->version += 1;
         }
 
@@ -167,7 +167,7 @@ class PaperController extends Controller
     public function destroy(Paper $paper)
     {
         if ($paper->file_path) {
-            Storage::disk('public')->delete($paper->file_path);
+            Storage::disk('local')->delete($paper->file_path);
         }
         ActivityLog::log('paper_deleted', "Paper '{$paper->title}' deleted", null);
         $paper->delete();
@@ -193,6 +193,34 @@ class PaperController extends Controller
 
         ActivityLog::log('reviewer_assigned', "Reviewer '{$reviewer->name}' assigned to paper '{$paper->title}'", $paper);
 
+        // Simulate sending email to reviewer
+        \Illuminate\Support\Facades\Log::info("EMAIL NOTIFICATION: Paper '{$paper->title}' assigned to Reviewer '{$reviewer->email}'.");
+
         return response()->json($paper->load(['author', 'assignedReviewer']));
+    }
+
+    public function download(Request $request, Paper $paper)
+    {
+        // Access control
+        $user = $request->user();
+        $canDownload = false;
+
+        if ($paper->status === 'published') {
+            $canDownload = true; // Public can download published papers
+        } elseif ($user) {
+            if ($user->isAdmin() || $paper->author_id === $user->id || $paper->assigned_reviewer_id === $user->id) {
+                $canDownload = true;
+            }
+        }
+
+        if (!$canDownload) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        if (!$paper->file_path || !Storage::disk('local')->exists($paper->file_path)) {
+            return response()->json(['message' => 'File not found'], 404);
+        }
+
+        return Storage::disk('local')->download($paper->file_path, $paper->file_name);
     }
 }
