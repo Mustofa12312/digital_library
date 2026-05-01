@@ -7,6 +7,7 @@ import { TableSkeleton } from '../components/Loader'
 import { Modal, ConfirmModal } from '../components/Modal'
 import { formatDate, STATUS_LABELS, truncate } from '../utils/helpers'
 import toast from 'react-hot-toast'
+import { useDebounce } from '../hooks/useDebounce'
 
 const STATUSES = ['', 'pending', 'under_review', 'accepted', 'revision', 'rejected', 'published']
 
@@ -25,16 +26,18 @@ export default function PaperManagementPage() {
   const [deleteConfirm, setDeleteConfirm] = useState(null)
   const [detailModal, setDetailModal] = useState(null)
 
+  const debouncedSearch = useDebounce(search, 500)
+
   const fetchPapers = useCallback(() => {
     setLoading(true)
-    const params = { page, search, ...(statusFilter && { status: statusFilter }) }
+    const params = { page, search: debouncedSearch, ...(statusFilter && { status: statusFilter }) }
     paperService.list(params)
       .then(res => {
         setPapers(res.data || res)
-        setMeta(res.meta || null)
+        setMeta(res) // res directly contains pagination data in Laravel
       })
       .finally(() => setLoading(false))
-  }, [page, search, statusFilter])
+  }, [page, debouncedSearch, statusFilter])
 
   useEffect(() => { fetchPapers() }, [fetchPapers])
 
@@ -191,15 +194,13 @@ export default function PaperManagementPage() {
                             👤
                           </button>
                           {paper.file_path && (
-                            <a
-                              href={`/storage/${paper.file_path}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              onClick={() => paperService.download(paper.id, paper.file_name)}
                               className="btn btn-sm btn-ghost"
                               title="Download PDF"
                             >
                               📥
-                            </a>
+                            </button>
                           )}
                           <button
                             onClick={() => setDeleteConfirm(paper)}
@@ -305,14 +306,12 @@ export default function PaperManagementPage() {
               </div>
             </div>
             {detailModal.file_path && (
-              <a
-                href={`/storage/${detailModal.file_path}`}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => paperService.download(detailModal.id, detailModal.file_name)}
                 className="btn-primary inline-flex"
               >
                 📥 Download PDF
-              </a>
+              </button>
             )}
           </div>
         )}

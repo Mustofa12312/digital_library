@@ -10,6 +10,11 @@ const adminNav = [
   { to: '/users', icon: '👥', label: 'Manajemen User' },
 ]
 
+const superAdminNav = [
+  ...adminNav,
+  { to: '/settings', icon: '⚙️', label: 'Pengaturan Sistem' },
+]
+
 const authorNav = [
   { to: '/dashboard', icon: '📊', label: 'Dashboard' },
   { to: '/my-papers', icon: '📄', label: 'Paper Saya' },
@@ -27,7 +32,7 @@ export default function AppLayout({ children }) {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const navItems = isAdmin() ? adminNav : isReviewer() ? reviewerNav : authorNav
+  const navItems = user?.role === 'super_admin' ? superAdminNav : isAdmin() ? adminNav : isReviewer() ? reviewerNav : authorNav
 
   const handleLogout = async () => {
     try {

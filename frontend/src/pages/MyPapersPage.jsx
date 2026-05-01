@@ -17,7 +17,7 @@ export default function MyPapersPage() {
     paperService.list({ page, ...(statusFilter && { status: statusFilter }) })
       .then(res => {
         setPapers(res.data || res)
-        setMeta(res.meta || null)
+        setMeta(res)
       })
       .finally(() => setLoading(false))
   }, [page, statusFilter])
@@ -92,13 +92,11 @@ export default function MyPapersPage() {
 
                 <div className="flex gap-2 flex-shrink-0">
                   {paper.file_path && (
-                    <a
-                      href={`/storage/${paper.file_path}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      onClick={() => paperService.download(paper.id, paper.file_name)}
                       className="btn btn-sm btn-ghost"
                       title="Download PDF"
-                    >📥 PDF</a>
+                    >📥 PDF</button>
                   )}
                   {['pending', 'revision'].includes(paper.status) && (
                     <Link to={`/my-papers/${paper.id}/edit`} className="btn btn-sm btn-outline">

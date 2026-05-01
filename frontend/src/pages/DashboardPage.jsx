@@ -75,20 +75,17 @@ export default function DashboardPage() {
             {/* Submission Trend */}
             <div className="card card-body lg:col-span-2">
               <h3 className="font-semibold text-gray-800 mb-4">📈 Tren Submisi (6 Bulan Terakhir)</h3>
-              <ResponsiveContainer width="100%" height={200}>
-                <AreaChart data={data.submission_trend || []}>
-                  <defs>
-                    <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#005F02" stopOpacity={0.2} />
-                      <stop offset="95%" stopColor="#005F02" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-                  <YAxis tick={{ fontSize: 12 }} allowDecimals={false} />
-                  <Tooltip />
-                  <Area type="monotone" dataKey="count" stroke="#005F02" fill="url(#colorCount)" strokeWidth={2} />
-                </AreaChart>
+              <ResponsiveContainer width="100%" height={240}>
+                <BarChart data={data.submission_trend || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                  <XAxis dataKey="month" tick={{ fill: '#64748b', fontSize: 12 }} axisLine={false} tickLine={false} dy={10} />
+                  <YAxis tick={{ fill: '#64748b', fontSize: 12 }} axisLine={false} tickLine={false} allowDecimals={false} />
+                  <Tooltip
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}
+                    cursor={{ fill: '#f1f5f9' }}
+                  />
+                  <Bar dataKey="count" fill="#10B981" radius={[6, 6, 0, 0]} maxBarSize={50} />
+                </BarChart>
               </ResponsiveContainer>
             </div>
 
@@ -97,12 +94,21 @@ export default function DashboardPage() {
               <h3 className="font-semibold text-gray-800 mb-4">🥧 Status Paper</h3>
               {pieData.length > 0 ? (
                 <>
-                  <ResponsiveContainer width="100%" height={160}>
+                  <ResponsiveContainer width="100%" height={200}>
                     <PieChart>
-                      <Pie data={pieData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} dataKey="value">
+                      <Pie
+                        data={pieData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={55}
+                        outerRadius={80}
+                        dataKey="value"
+                        paddingAngle={5}
+                        stroke="none"
+                      >
                         {pieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                       </Pie>
-                      <Tooltip />
+                      <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }} />
                     </PieChart>
                   </ResponsiveContainer>
                   <div className="space-y-1.5 mt-2">

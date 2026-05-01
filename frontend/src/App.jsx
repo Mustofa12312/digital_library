@@ -11,6 +11,8 @@ import PaperManagementPage from './pages/PaperManagementPage'
 import UserManagementPage from './pages/UserManagementPage'
 import MyPapersPage from './pages/MyPapersPage'
 import SubmitPaperPage from './pages/SubmitPaperPage'
+import EditPaperPage from './pages/EditPaperPage'
+import SystemSettingsPage from './pages/SystemSettingsPage'
 import ReviewQueuePage from './pages/ReviewQueuePage'
 import PublicationsPage from './pages/PublicationsPage'
 import PublicationDetailPage from './pages/PublicationDetailPage'
@@ -62,6 +64,12 @@ function AppRoutes() {
         </ProtectedRoute>
       } />
 
+      <Route path="/settings" element={
+        <ProtectedRoute roles={['super_admin']}>
+          <SystemSettingsPage />
+        </ProtectedRoute>
+      } />
+
       {/* Author routes */}
       <Route path="/my-papers" element={
         <ProtectedRoute roles={['author']}>
@@ -72,6 +80,12 @@ function AppRoutes() {
       <Route path="/submit-paper" element={
         <ProtectedRoute roles={['author']}>
           <SubmitPaperPage />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/my-papers/:id/edit" element={
+        <ProtectedRoute roles={['author']}>
+          <EditPaperPage />
         </ProtectedRoute>
       } />
 

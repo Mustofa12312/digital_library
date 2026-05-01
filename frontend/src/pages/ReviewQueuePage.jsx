@@ -109,12 +109,10 @@ export default function ReviewQueuePage() {
 
                 <div className="flex gap-2 flex-shrink-0">
                   {paper.file_path && (
-                    <a
-                      href={`/storage/${paper.file_path}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      onClick={() => paperService.download(paper.id, paper.file_name)}
                       className="btn btn-sm btn-ghost"
-                    >📥 PDF</a>
+                    >📥 PDF</button>
                   )}
                   <button
                     onClick={() => openReviewModal(paper)}

@@ -21,16 +21,18 @@ export const paperService = {
     return data
   },
 
-  async create(formData) {
+  async create(formData, onUploadProgress) {
     const { data } = await api.post('/papers', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress,
     })
     return data
   },
 
-  async update(id, formData) {
+  async update(id, formData, onUploadProgress) {
     const { data } = await api.post(`/papers/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress,
     })
     return data
   },
@@ -43,5 +45,22 @@ export const paperService = {
   async assignReviewer(paperId, reviewerId) {
     const { data } = await api.post(`/papers/${paperId}/assign-reviewer`, { reviewer_id: reviewerId })
     return data
+  },
+
+  async download(id, fileName = 'document.pdf', isPublic = false) {
+    const endpoint = isPublic ? `/publications/${id}/download` : `/papers/${id}/download`;
+    const response = await api.get(endpoint, {
+      responseType: 'blob',
+    });
+    
+    // Create blob link to download
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
   },
 }

@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { paperService } from '../services/paperService'
+import { systemService } from '../services/systemService'
 import { formatDate, truncate } from '../utils/helpers'
+import { useDebounce } from '../hooks/useDebounce'
 
 export default function PublicationsPage() {
   const [papers, setPapers] = useState([])
@@ -9,32 +11,40 @@ export default function PublicationsPage() {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [meta, setMeta] = useState(null)
+  const [settings, setSettings] = useState(null)
+
+  const debouncedSearch = useDebounce(search, 500)
 
   const fetchPapers = useCallback(() => {
     setLoading(true)
-    paperService.publicList({ page, search })
+    paperService.publicList({ page, search: debouncedSearch })
       .then(res => {
         setPapers(res.data || res)
-        setMeta(res.meta || null)
+        setMeta(res)
       })
       .finally(() => setLoading(false))
-  }, [page, search])
+  }, [page, debouncedSearch])
 
-  useEffect(() => { fetchPapers() }, [fetchPapers])
+  useEffect(() => { 
+    fetchPapers() 
+    systemService.getSettings().then(setSettings).catch(() => {})
+  }, [fetchPapers])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-white">
       {/* Hero */}
       <div className="bg-gradient-to-br from-primary via-secondary to-primary-800 text-white">
         <div className="max-w-6xl mx-auto px-6 py-16">
-          <div className="flex items-center gap-4 mb-8">
-            <Link to="/login" className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors">
-              <span className="text-white font-bold text-sm">A</span>
-            </Link>
-            <span className="font-bold text-white/80">APMS</span>
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <Link to="/login" className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors">
+                <span className="text-white font-bold text-sm">A</span>
+              </Link>
+              <span className="font-bold text-white/80">{settings?.university_name || 'APMS'}</span>
+            </div>
           </div>
           <h1 className="text-4xl font-bold mb-3">Publikasi Ilmiah</h1>
-          <p className="text-white/70 text-lg mb-8">Kumpulan paper penelitian yang telah melalui proses peer review</p>
+          <p className="text-white/70 text-lg mb-8">{settings?.description || 'Kumpulan paper penelitian yang telah melalui proses peer review'}</p>
 
           {/* Search */}
           <div className="relative max-w-xl">
@@ -86,7 +96,9 @@ export default function PublicationsPage() {
                 <div className="card-body">
                   <div className="flex items-start gap-3 mb-3">
                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-xl flex-shrink-0 group-hover:bg-primary/20 transition-colors">
-                      🌐
+                      <button onClick={(e) => { e.preventDefault(); paperService.download(paper.id, `${paper.title}.pdf`, true) }} title="Download PDF">
+                        📥
+                      </button>
                     </div>
                     <div>
                       <span className="badge-published text-xs">Dipublikasikan</span>
