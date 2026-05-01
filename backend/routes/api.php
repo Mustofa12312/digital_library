@@ -54,6 +54,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // User Management (Admin only)
     Route::middleware('role:admin,super_admin')->group(function () {
+        Route::get('/users/export', [UserController::class, 'exportCsv']);
+        Route::get('/users/template', [UserController::class, 'downloadCsvTemplate']);
+        Route::post('/users/import', [UserController::class, 'importCsv']);
+        
         Route::get('/users', [UserController::class, 'index']);
         Route::post('/users', [UserController::class, 'store']);
         Route::get('/users/{user}', [UserController::class, 'show']);

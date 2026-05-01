@@ -121,4 +121,98 @@ class UserController extends Controller
             User::where('role', 'reviewer')->where('is_active', true)->get(['id', 'name', 'email', 'institution'])
         );
     }
+
+    public function exportCsv(Request $request)
+    {
+        $users = User::all();
+        $csvData = "name,email,role,institution\n";
+        foreach ($users as $user) {
+            $csvData .= sprintf(
+                "\"%s\",\"%s\",\"%s\",\"%s\"\n",
+                addslashes($user->name),
+                addslashes($user->email),
+                $user->role,
+                addslashes($user->institution ?? '')
+            );
+        }
+        
+        return response($csvData)
+            ->header('Content-Type', 'text/csv')
+            ->header('Content-Disposition', 'attachment; filename="users_export_' . date('Ymd_His') . '.csv"');
+    }
+
+    public function downloadCsvTemplate()
+    {
+        $csvData = "name,email,role,institution,password\n";
+        $csvData .= "\"Dr. Budi Santoso\",\"budi@kampus.ac.id\",\"author\",\"Universitas ABC\",\"password123\"\n";
+        $csvData .= "\"Prof. Siti Aminah\",\"siti@kampus.ac.id\",\"reviewer\",\"Universitas XYZ\",\"password123\"\n";
+        
+        return response($csvData)
+            ->header('Content-Type', 'text/csv')
+            ->header('Content-Disposition', 'attachment; filename="template_import_user.csv"');
+    }
+
+    public function importCsv(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:csv,txt|max:2048'
+        ]);
+
+        $file = $request->file('file');
+        $handle = fopen($file->getRealPath(), "r");
+        
+        $header = fgetcsv($handle, 1000, ",");
+        
+        $successCount = 0;
+        $errorCount = 0;
+
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+            if (count($data) < 2) continue;
+            
+            $name = trim($data[0] ?? '');
+            $email = trim($data[1] ?? '');
+            if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errorCount++;
+                continue;
+            }
+
+            $role = strtolower(trim($data[2] ?? 'author'));
+            $institution = trim($data[3] ?? '');
+            $password = trim($data[4] ?? 'password123');
+
+            if (!in_array($role, ['author', 'reviewer', 'admin', 'super_admin'])) {
+                $role = 'author';
+            }
+
+            // Only super_admin can create admins/super_admins via import
+            if (in_array($role, ['admin', 'super_admin']) && $request->user()->role !== 'super_admin') {
+                $role = 'author';
+            }
+
+            $user = User::where('email', $email)->first();
+            if ($user) {
+                $user->update([
+                    'name' => $name ?: $user->name,
+                    'role' => $role,
+                    'institution' => $institution,
+                ]);
+            } else {
+                User::create([
+                    'name' => $name ?: 'No Name',
+                    'email' => $email,
+                    'role' => $role,
+                    'institution' => $institution,
+                    'password' => \Illuminate\Support\Facades\Hash::make($password),
+                ]);
+            }
+            $successCount++;
+        }
+        fclose($handle);
+
+        \App\Models\ActivityLog::log('user_import', "Imported {$successCount} users from CSV", null);
+
+        return response()->json([
+            'message' => "Import selesai. Berhasil: {$successCount}, Gagal/Dilewati: {$errorCount}"
+        ]);
+    }
 }
