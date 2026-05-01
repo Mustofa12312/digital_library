@@ -4,6 +4,7 @@ import { RoleBadge } from '../components/Badge'
 import { TableSkeleton } from '../components/Loader'
 import { Modal, ConfirmModal } from '../components/Modal'
 import { formatDate, ROLE_LABELS, getInitials } from '../utils/helpers'
+import { useDebounce } from '../hooks/useDebounce'
 import toast from 'react-hot-toast'
 
 const ROLES = ['super_admin', 'admin', 'reviewer', 'author']
@@ -22,16 +23,21 @@ export default function UserManagementPage() {
   const [form, setForm] = useState(defaultForm)
   const [submitting, setSubmitting] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState(null)
+  const [importModal, setImportModal] = useState(false)
+  const [importFile, setImportFile] = useState(null)
+  const [importing, setImporting] = useState(false)
+
+  const debouncedSearch = useDebounce(search, 500)
 
   const fetchUsers = useCallback(() => {
     setLoading(true)
-    userService.list({ page, search, ...(roleFilter && { role: roleFilter }) })
+    userService.list({ page, search: debouncedSearch, ...(roleFilter && { role: roleFilter }) })
       .then(res => {
         setUsers(res.data || res)
-        setMeta(res.meta || null)
+        setMeta(res)
       })
       .finally(() => setLoading(false))
-  }, [page, search, roleFilter])
+  }, [page, debouncedSearch, roleFilter])
 
   useEffect(() => { fetchUsers() }, [fetchUsers])
 
@@ -88,16 +94,62 @@ export default function UserManagementPage() {
     }
   }
 
+  const handleExportCsv = async () => {
+    try {
+      await userService.exportCsv()
+      toast.success('CSV berhasil diunduh')
+    } catch {
+      toast.error('Gagal mengunduh CSV')
+    }
+  }
+
+  const handleDownloadTemplate = async () => {
+    try {
+      await userService.downloadTemplate()
+      toast.success('Template CSV berhasil diunduh')
+    } catch {
+      toast.error('Gagal mengunduh template')
+    }
+  }
+
+  const handleImportSubmit = async (e) => {
+    e.preventDefault()
+    if (!importFile) {
+      toast.error('Silakan pilih file CSV terlebih dahulu')
+      return
+    }
+    setImporting(true)
+    try {
+      const res = await userService.importCsv(importFile)
+      toast.success(res.message || 'Import berhasil')
+      setImportModal(false)
+      setImportFile(null)
+      fetchUsers()
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Gagal mengimpor data')
+    } finally {
+      setImporting(false)
+    }
+  }
+
   return (
     <div className="animate-fade-in">
       <div className="page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="page-title">Manajemen User 👥</h1>
-          <p className="page-subtitle">Kelola akun, role, dan akses pengguna</p>
+          <p className="page-subtitle">Kelola akun, import dosen, dan hak akses pengguna</p>
         </div>
-        <button onClick={openCreate} className="btn-primary" id="btn-create-user">
-          <span>➕</span> Tambah User
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button onClick={() => setImportModal(true)} className="btn-outline btn-sm">
+            📤 Import CSV
+          </button>
+          <button onClick={handleExportCsv} className="btn-outline btn-sm">
+            📥 Export CSV
+          </button>
+          <button onClick={openCreate} className="btn-primary" id="btn-create-user">
+            <span>➕</span> Tambah User
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -280,6 +332,54 @@ export default function UserManagementPage() {
         confirmText="Hapus"
         danger
       />
+
+      {/* Import CSV Modal */}
+      <Modal isOpen={importModal} onClose={() => setImportModal(false)} title="Import User / Dosen via CSV" size="md">
+        <form onSubmit={handleImportSubmit} className="space-y-4">
+          <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl text-sm text-blue-800">
+            <p className="font-semibold mb-1">Panduan Import:</p>
+            <ul className="list-disc pl-5 space-y-1 text-xs">
+              <li>Gunakan format CSV dengan pemisah koma (,).</li>
+              <li>Kolom wajib: <code className="bg-white px-1 rounded">name,email,role,institution,password</code></li>
+              <li>Role yang diizinkan: <strong>author, reviewer, admin, super_admin</strong></li>
+              <li>Jika email sudah ada, data user akan diperbarui (update).</li>
+            </ul>
+            <button 
+              type="button" 
+              onClick={handleDownloadTemplate} 
+              className="mt-3 text-sm font-semibold text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
+            >
+              📄 Download Template CSV
+            </button>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Pilih File CSV *</label>
+            <input 
+              type="file" 
+              accept=".csv,.txt"
+              onChange={e => setImportFile(e.target.files[0])}
+              className="block w-full text-sm text-gray-500
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-full file:border-0
+                file:text-sm file:font-semibold
+                file:bg-primary/10 file:text-primary
+                hover:file:bg-primary/20"
+              required
+            />
+            {importFile && (
+              <p className="text-xs text-green-600 mt-2">File terpilih: {importFile.name} ({(importFile.size / 1024).toFixed(1)} KB)</p>
+            )}
+          </div>
+
+          <div className="flex gap-3 justify-end pt-4 border-t border-gray-100">
+            <button type="button" onClick={() => setImportModal(false)} className="btn-ghost">Batal</button>
+            <button type="submit" disabled={importing || !importFile} className="btn-primary">
+              {importing ? 'Mengimpor...' : '🚀 Import Data'}
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   )
 }
