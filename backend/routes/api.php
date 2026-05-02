@@ -14,6 +14,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/publications', [PaperController::class, 'publicIndex']);
 Route::get('/publications/{paper}', [PaperController::class, 'show']);
 Route::get('/publications/{paper}/download', [PaperController::class, 'download']);
+Route::get('/publications/{paper}/download-word', [PaperController::class, 'downloadWord']);
 
 // Public Settings Route
 Route::get('/settings', [\App\Http\Controllers\Api\SystemController::class, 'getSettings']);
@@ -32,6 +33,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/papers', [PaperController::class, 'index']);
     Route::get('/papers/{paper}', [PaperController::class, 'show']);
     Route::get('/papers/{paper}/download', [PaperController::class, 'download']);
+    Route::get('/papers/{paper}/download-word', [PaperController::class, 'downloadWord']);
     Route::post('/papers', [PaperController::class, 'store'])
         ->middleware('role:author,admin,super_admin');
     Route::post('/papers/{paper}', [PaperController::class, 'update'])

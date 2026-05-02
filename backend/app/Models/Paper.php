@@ -11,6 +11,7 @@ class Paper extends Model
 
     protected $fillable = [
         'title', 'abstract', 'keywords', 'file_path', 'file_name',
+        'word_file_path', 'word_file_name',
         'author_id', 'assigned_reviewer_id', 'status', 'version', 'admin_notes',
     ];
 

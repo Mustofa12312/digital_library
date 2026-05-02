@@ -70,6 +70,7 @@ class PaperController extends Controller
             'abstract' => 'required|string',
             'keywords' => 'nullable|string|max:500',
             'file' => 'nullable|file|mimes:pdf|max:20480', // 20MB max
+            'word_file' => 'nullable|file|mimes:doc,docx|max:20480', // 20MB max
             'co_authors' => 'nullable|array',
             'co_authors.*.name' => 'required_with:co_authors|string',
             'co_authors.*.email' => 'nullable|email',
@@ -84,12 +85,22 @@ class PaperController extends Controller
             $filePath = $file->store('papers', 'local');
         }
 
+        $wordFilePath = null;
+        $wordFileName = null;
+        if ($request->hasFile('word_file')) {
+            $wordFile = $request->file('word_file');
+            $wordFileName = $wordFile->getClientOriginalName();
+            $wordFilePath = $wordFile->store('papers/word', 'local');
+        }
+
         $paper = Paper::create([
             'title' => $request->title,
             'abstract' => $request->abstract,
             'keywords' => $request->keywords,
             'file_path' => $filePath,
             'file_name' => $fileName,
+            'word_file_path' => $wordFilePath,
+            'word_file_name' => $wordFileName,
             'author_id' => $request->user()->id,
             'status' => Paper::STATUS_PENDING,
             'version' => 1,
@@ -141,6 +152,7 @@ class PaperController extends Controller
             'abstract' => 'sometimes|string',
             'keywords' => 'nullable|string|max:500',
             'file' => 'nullable|file|mimes:pdf|max:20480',
+            'word_file' => 'nullable|file|mimes:doc,docx|max:20480',
             'status' => 'sometimes|in:pending,under_review,accepted,revision,rejected,published',
             'assigned_reviewer_id' => 'nullable|exists:users,id',
             'admin_notes' => 'nullable|string',
@@ -156,6 +168,15 @@ class PaperController extends Controller
             $paper->version += 1;
         }
 
+        if ($request->hasFile('word_file')) {
+            if ($paper->word_file_path) {
+                Storage::disk('local')->delete($paper->word_file_path);
+            }
+            $wordFile = $request->file('word_file');
+            $paper->word_file_name = $wordFile->getClientOriginalName();
+            $paper->word_file_path = $wordFile->store('papers/word', 'local');
+        }
+
         $paper->fill($request->only(['title', 'abstract', 'keywords', 'status', 'assigned_reviewer_id', 'admin_notes']));
         $paper->save();
 
@@ -168,6 +189,9 @@ class PaperController extends Controller
     {
         if ($paper->file_path) {
             Storage::disk('local')->delete($paper->file_path);
+        }
+        if ($paper->word_file_path) {
+            Storage::disk('local')->delete($paper->word_file_path);
         }
         ActivityLog::log('paper_deleted', "Paper '{$paper->title}' deleted", null);
         $paper->delete();
@@ -222,5 +246,30 @@ class PaperController extends Controller
         }
 
         return Storage::disk('local')->download($paper->file_path, $paper->file_name);
+    }
+
+    public function downloadWord(Request $request, Paper $paper)
+    {
+        // Access control
+        $user = $request->user();
+        $canDownload = false;
+
+        if ($paper->status === 'published') {
+            $canDownload = true; // Public can download published papers
+        } elseif ($user) {
+            if ($user->isAdmin() || $paper->author_id === $user->id || $paper->assigned_reviewer_id === $user->id) {
+                $canDownload = true;
+            }
+        }
+
+        if (!$canDownload) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        if (!$paper->word_file_path || !Storage::disk('local')->exists($paper->word_file_path)) {
+            return response()->json(['message' => 'Word file not found'], 404);
+        }
+
+        return Storage::disk('local')->download($paper->word_file_path, $paper->word_file_name);
     }
 }
