@@ -17,6 +17,7 @@ import SystemSettingsPage from './pages/SystemSettingsPage'
 import ReviewQueuePage from './pages/ReviewQueuePage'
 import PublicationsPage from './pages/PublicationsPage'
 import PublicationDetailPage from './pages/PublicationDetailPage'
+import ProfilePage from './pages/ProfilePage'
 
 function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth()
@@ -79,6 +80,12 @@ function AppRoutes() {
       <Route path="/settings" element={
         <ProtectedRoute roles={['super_admin']}>
           <SystemSettingsPage />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/profile" element={
+        <ProtectedRoute>
+          <ProfilePage />
         </ProtectedRoute>
       } />
 

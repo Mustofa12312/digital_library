@@ -99,7 +99,7 @@ export default function AppLayout({ children }) {
                 <span className="text-white text-xs font-bold">{getInitials(user?.name)}</span>
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold text-gray-800 truncate">{user?.name}</div>
+                <Link to="/profile" className="text-sm font-semibold text-gray-800 truncate hover:text-primary transition-colors block">{user?.name}</Link>
                 <div className="text-xs text-gray-400">{ROLE_LABELS[user?.role]}</div>
               </div>
               <button

@@ -90,6 +90,20 @@ export default function PaperManagementPage() {
           <h1 className="page-title">Manajemen Paper 📄</h1>
           <p className="page-subtitle">Kelola semua submission paper penelitian</p>
         </div>
+        {isAdmin() && (
+          <button 
+            onClick={() => {
+              toast.promise(paperService.exportCsv(), {
+                loading: 'Mengekspor data...',
+                success: 'Data berhasil diekspor!',
+                error: 'Gagal mengekspor data',
+              })
+            }} 
+            className="btn-outline shrink-0"
+          >
+            📥 Export CSV
+          </button>
+        )}
       </div>
 
       {/* Filters */}

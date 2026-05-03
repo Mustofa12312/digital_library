@@ -11,6 +11,7 @@ export default function SubmitPaperPage() {
   const [form, setForm] = useState({
     title: '',
     abstract: '',
+    category: '',
     keywords: '',
   })
   const [file, setFile] = useState(null)
@@ -61,6 +62,7 @@ export default function SubmitPaperPage() {
       const formData = new FormData()
       formData.append('title', form.title)
       formData.append('abstract', form.abstract)
+      if (form.category) formData.append('category', form.category)
       formData.append('keywords', form.keywords)
       if (file) formData.append('file', file)
       if (wordFile) formData.append('word_file', wordFile)
@@ -131,6 +133,22 @@ export default function SubmitPaperPage() {
               required
             />
             <div className="text-right text-xs text-gray-400 mt-1">{form.abstract.length} karakter</div>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="paper-category">Kategori / Bidang Ilmu *</label>
+            <select
+              id="paper-category"
+              value={form.category}
+              onChange={e => setForm({ ...form, category: e.target.value })}
+              className="form-input"
+              required
+            >
+              <option value="">-- Pilih Kategori --</option>
+              {['Computer Science', 'Information Systems', 'Software Engineering', 'Artificial Intelligence', 'Networking', 'Others'].map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
           </div>
 
           <div className="form-group">
