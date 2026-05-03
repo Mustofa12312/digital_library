@@ -147,9 +147,20 @@ export default function AppLayout({ children }) {
 
           <div className="flex items-center gap-3">
             <NotificationBell />
-            <span className="text-sm text-gray-500">Selamat datang, <span className="font-semibold text-gray-800">{user?.name?.split(' ')[0]}</span></span>
-            <div className={`badge-${user?.role} text-xs`}>
-              {ROLE_LABELS[user?.role]}
+            <div className="flex items-center gap-2 pl-2 border-l border-gray-100">
+              <div className="text-right hidden sm:block">
+                <p className="text-xs font-semibold text-gray-900 leading-none">{user?.name}</p>
+                <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider">{user?.role?.replace('_', ' ')}</p>
+              </div>
+              <Link to="/profile" className="w-9 h-9 rounded-xl overflow-hidden shadow-sm hover:ring-2 hover:ring-primary/20 transition-all">
+                {user?.avatar_path ? (
+                  <img src={`/storage/${user.avatar_path}`} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-xs font-bold">
+                    {getInitials(user?.name)}
+                  </div>
+                )}
+              </Link>
             </div>
           </div>
         </header>

@@ -181,10 +181,34 @@ export default function DashboardPage() {
 
       {/* Reviewer Dashboard */}
       {isReviewer() && data && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <StatCard icon="📋" label="Total Ditugaskan" value={data.total_assigned} color="bg-blue-100 text-blue-800" />
-          <StatCard icon="⏳" label="Pending Review" value={data.pending_reviews} color="bg-yellow-100 text-yellow-800" />
-          <StatCard icon="✅" label="Selesai Direview" value={data.total_reviewed} color="bg-green-100 text-green-800" />
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <StatCard icon="📋" label="Total Ditugaskan" value={data.total_assigned} color="bg-blue-100 text-blue-800" />
+            <StatCard icon="⏳" label="Pending Review" value={data.pending_reviews} color="bg-yellow-100 text-yellow-800" />
+            <StatCard icon="✅" label="Selesai Direview" value={data.total_reviewed} color="bg-green-100 text-green-800" />
+          </div>
+
+          <div className="card card-body">
+            <h3 className="font-semibold text-gray-800 mb-4">🔍 Antrian Review Terbaru</h3>
+            {data.recent_assignments?.length === 0 ? (
+              <p className="text-sm text-gray-400 text-center py-6">Tidak ada antrian review aktif.</p>
+            ) : (
+              <div className="space-y-3">
+                {data.recent_assignments.map((paper) => (
+                  <div key={paper.id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-50">
+                    <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 text-lg">
+                      🔍
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-bold text-gray-800 truncate">{paper.title}</div>
+                      <div className="text-xs text-gray-400 mt-0.5">Author: {paper.author?.name} · {formatDate(paper.created_at)}</div>
+                    </div>
+                    <Link to="/review-queue" className="btn btn-sm btn-ghost text-primary">Review →</Link>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       )}
 

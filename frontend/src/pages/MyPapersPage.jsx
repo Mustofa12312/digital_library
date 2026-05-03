@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { paperService } from '../services/paperService'
-import { StatusBadge } from '../components/Badge'
+import { StatusBadge, DecisionBadge } from '../components/Badge'
+import { Modal } from '../components/Modal'
 import { formatDate, STATUS_LABELS, STATUS_ICONS } from '../utils/helpers'
+import { reviewService } from '../services/reviewService'
 import { useDebounce } from '../hooks/useDebounce'
 
 const STATUS_COLORS = {
@@ -31,6 +33,22 @@ export default function MyPapersPage() {
   const [page, setPage] = useState(1)
   const [meta, setMeta] = useState(null)
   const [expandedId, setExpandedId] = useState(null)
+  const [historyModal, setHistoryModal] = useState(null)
+  const [historyLoading, setHistoryLoading] = useState(false)
+  const [reviews, setReviews] = useState([])
+
+  const fetchHistory = async (paperId) => {
+    setHistoryLoading(true)
+    setHistoryModal(paperId)
+    try {
+      const data = await reviewService.getForPaper(paperId)
+      setReviews(data)
+    } catch {
+      toast.error('Gagal memuat riwayat review')
+    } finally {
+      setHistoryLoading(false)
+    }
+  }
 
   const debouncedSearch = useDebounce(search, 400)
 
@@ -192,7 +210,15 @@ export default function MyPapersPage() {
                       {/* Review comments */}
                       {paper.latest_review && (
                         <div className={`mb-3 p-3.5 rounded-xl border text-sm ${colors.bg} ${colors.border}`}>
-                          <p className="font-semibold text-gray-700 mb-1 text-xs uppercase tracking-wide">💬 Komentar Reviewer</p>
+                          <div className="flex items-center justify-between mb-1">
+                            <p className="font-semibold text-gray-700 text-xs uppercase tracking-wide">💬 Komentar Reviewer Terkini</p>
+                            <button 
+                              onClick={() => fetchHistory(paper.id)}
+                              className="text-[10px] text-primary font-bold hover:underline"
+                            >
+                              Lihat Riwayat →
+                            </button>
+                          </div>
                           <p className="text-gray-600 leading-relaxed">{paper.latest_review.comment}</p>
                         </div>
                       )}
@@ -241,6 +267,45 @@ export default function MyPapersPage() {
           )}
         </div>
       )}
+
+      {/* Review History Modal */}
+      <Modal 
+        isOpen={!!historyModal} 
+        onClose={() => setHistoryModal(null)} 
+        title="Riwayat Review & Revisi"
+        size="lg"
+      >
+        {historyLoading ? (
+          <div className="py-20 text-center">
+            <div className="animate-spin text-3xl mb-3">⏳</div>
+            <p className="text-gray-400">Memuat riwayat...</p>
+          </div>
+        ) : reviews.length === 0 ? (
+          <div className="py-20 text-center">
+            <div className="text-4xl mb-3">📭</div>
+            <p className="text-gray-400">Belum ada riwayat review untuk paper ini.</p>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {reviews.map((rev, idx) => (
+              <div key={rev.id} className="relative pl-6 border-l-2 border-gray-100">
+                <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-primary" />
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-gray-900">Review #{reviews.length - idx}</span>
+                    <DecisionBadge decision={rev.decision} />
+                  </div>
+                  <span className="text-xs text-gray-400">{formatDate(rev.created_at)}</span>
+                </div>
+                <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                  <p className="text-xs font-semibold text-gray-400 uppercase mb-2">Komentar Reviewer:</p>
+                  <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{rev.comment}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </Modal>
     </div>
   )
 }
