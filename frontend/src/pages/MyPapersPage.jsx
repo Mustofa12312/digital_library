@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { paperService } from '../services/paperService'
 import { StatusBadge } from '../components/Badge'
 import { formatDate, STATUS_LABELS, STATUS_ICONS } from '../utils/helpers'
+import { useDebounce } from '../hooks/useDebounce'
 
 const STATUS_COLORS = {
   pending:      { bg: 'bg-amber-50', border: 'border-amber-200', accent: 'bg-amber-400', icon: 'bg-amber-100 text-amber-600' },
@@ -14,34 +15,39 @@ const STATUS_COLORS = {
 }
 
 const STATUSES = ['', 'pending', 'under_review', 'accepted', 'revision', 'rejected', 'published']
+const CATEGORIES = ['', 'Computer Science', 'Information Systems', 'Software Engineering', 'Artificial Intelligence', 'Networking', 'Others']
 
 const STATUS_COUNTS_LABELS = {
-  '': 'Semua',
-  pending: 'Menunggu',
-  under_review: 'Direview',
-  accepted: 'Diterima',
-  revision: 'Revisi',
-  rejected: 'Ditolak',
-  published: 'Terbit',
+  '': 'Semua', pending: 'Menunggu', under_review: 'Direview',
+  accepted: 'Diterima', revision: 'Revisi', rejected: 'Ditolak', published: 'Terbit',
 }
 
 export default function MyPapersPage() {
   const [papers, setPapers] = useState([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('')
+  const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [meta, setMeta] = useState(null)
   const [expandedId, setExpandedId] = useState(null)
 
+  const debouncedSearch = useDebounce(search, 400)
+
   const fetchPapers = useCallback(() => {
     setLoading(true)
-    paperService.list({ page, ...(statusFilter && { status: statusFilter }) })
+    paperService.list({
+      page,
+      search: debouncedSearch,
+      ...(statusFilter && { status: statusFilter }),
+      ...(categoryFilter && { category: categoryFilter }),
+    })
       .then(res => {
         setPapers(res.data || res)
         setMeta(res)
       })
       .finally(() => setLoading(false))
-  }, [page, statusFilter])
+  }, [page, statusFilter, categoryFilter, debouncedSearch])
 
   useEffect(() => { fetchPapers() }, [fetchPapers])
 
@@ -54,7 +60,7 @@ export default function MyPapersPage() {
             <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-xl">📚</div>
             <h1 className="text-2xl font-bold text-gray-900">Paper Saya</h1>
           </div>
-          <p className="text-sm text-gray-500 ml-13 pl-0.5">Daftar semua paper penelitian yang telah Anda submit</p>
+          <p className="text-sm text-gray-500 pl-0.5">Daftar semua paper penelitian yang telah Anda submit</p>
         </div>
         <Link
           to="/submit-paper"
@@ -65,8 +71,21 @@ export default function MyPapersPage() {
         </Link>
       </div>
 
+      {/* Search */}
+      <div className="relative mb-4">
+        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+        <input
+          type="text"
+          placeholder="Cari judul, abstrak..."
+          value={search}
+          onChange={e => { setSearch(e.target.value); setPage(1) }}
+          className="form-input pl-10"
+          id="my-papers-search"
+        />
+      </div>
+
       {/* Status Filter Tabs */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-1.5 mb-6 flex flex-wrap gap-1">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-1.5 mb-3 flex flex-wrap gap-1">
         {STATUSES.map(s => (
           <button
             key={s}
@@ -77,12 +96,24 @@ export default function MyPapersPage() {
                 : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
               }`}
           >
-            {s ? (
-              <>
-                <span className="text-base leading-none">{STATUS_ICONS[s]}</span>
-                {STATUS_COUNTS_LABELS[s]}
-              </>
-            ) : 'Semua'}
+            {s ? (<><span className="text-base leading-none">{STATUS_ICONS[s]}</span>{STATUS_COUNTS_LABELS[s]}</>) : 'Semua'}
+          </button>
+        ))}
+      </div>
+
+      {/* Category Filter */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {CATEGORIES.map(cat => (
+          <button
+            key={cat}
+            onClick={() => { setCategoryFilter(cat); setPage(1) }}
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-all border ${
+              categoryFilter === cat
+                ? 'bg-primary/10 text-primary border-primary/30'
+                : 'bg-white text-gray-500 border-gray-200 hover:border-primary/30'
+            }`}
+          >
+            {cat || 'Semua Kategori'}
           </button>
         ))}
       </div>
@@ -105,18 +136,14 @@ export default function MyPapersPage() {
         </div>
       ) : papers.length === 0 ? (
         <div className="card card-body text-center py-20">
-          <div className="w-20 h-20 rounded-3xl bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center text-4xl mx-auto mb-5">
-            📭
-          </div>
+          <div className="w-20 h-20 rounded-3xl bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center text-4xl mx-auto mb-5">📭</div>
           <h3 className="font-semibold text-gray-700 mb-2 text-lg">Belum ada paper ditemukan</h3>
           <p className="text-gray-400 text-sm mb-6 max-w-sm mx-auto">
-            {statusFilter
-              ? `Tidak ada paper dengan status "${STATUS_COUNTS_LABELS[statusFilter]}"`
-              : 'Mulai submit paper penelitian pertama Anda sekarang'}
+            {search ? `Tidak ada paper cocok dengan "${search}"` :
+             statusFilter ? `Tidak ada paper dengan status "${STATUS_COUNTS_LABELS[statusFilter]}"` :
+             'Mulai submit paper penelitian pertama Anda sekarang'}
           </p>
-          <Link to="/submit-paper" className="btn-primary mx-auto shadow-lg shadow-primary/20">
-            ✍️ Submit Sekarang
-          </Link>
+          <Link to="/submit-paper" className="btn-primary mx-auto shadow-lg shadow-primary/20">✍️ Submit Sekarang</Link>
         </div>
       ) : (
         <div className="space-y-4">
@@ -125,11 +152,7 @@ export default function MyPapersPage() {
             const isExpanded = expandedId === paper.id
 
             return (
-              <div
-                key={paper.id}
-                className={`group relative bg-white rounded-2xl border transition-all duration-300 hover:shadow-lg overflow-hidden
-                  ${colors.border}`}
-              >
+              <div key={paper.id} className={`group relative bg-white rounded-2xl border transition-all duration-300 hover:shadow-lg overflow-hidden ${colors.border}`}>
                 {/* Left accent bar */}
                 <div className={`absolute left-0 top-0 bottom-0 w-1 ${colors.accent}`} />
 
@@ -142,7 +165,6 @@ export default function MyPapersPage() {
 
                     {/* Main info */}
                     <div className="flex-1 min-w-0">
-                      {/* Title row */}
                       <div className="flex flex-wrap items-start gap-2 mb-1.5">
                         <h3 className="font-bold text-gray-900 text-base leading-snug flex-1 min-w-0 group-hover:text-primary transition-colors">
                           {paper.title}
@@ -158,9 +180,7 @@ export default function MyPapersPage() {
                           </span>
                         )}
                         {paper.keywords && paper.keywords.split(',').slice(0, 3).map((kw, i) => (
-                          <span key={i} className="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs rounded-full">
-                            {kw.trim()}
-                          </span>
+                          <span key={i} className="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs rounded-full">{kw.trim()}</span>
                         ))}
                       </div>
 
@@ -169,7 +189,7 @@ export default function MyPapersPage() {
                         {paper.abstract}
                       </p>
 
-                      {/* Review comment */}
+                      {/* Review comments */}
                       {paper.latest_review && (
                         <div className={`mb-3 p-3.5 rounded-xl border text-sm ${colors.bg} ${colors.border}`}>
                           <p className="font-semibold text-gray-700 mb-1 text-xs uppercase tracking-wide">💬 Komentar Reviewer</p>
@@ -179,16 +199,10 @@ export default function MyPapersPage() {
 
                       {/* Meta info */}
                       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-400">
-                        <span className="flex items-center gap-1">
-                          <span>📅</span> {formatDate(paper.created_at)}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <span>🔢</span> Versi {paper.version}
-                        </span>
+                        <span className="flex items-center gap-1"><span>📅</span> {formatDate(paper.created_at)}</span>
+                        <span className="flex items-center gap-1"><span>🔢</span> Versi {paper.version}</span>
                         {paper.assigned_reviewer && (
-                          <span className="flex items-center gap-1">
-                            <span>👤</span> Reviewer: {paper.assigned_reviewer.name}
-                          </span>
+                          <span className="flex items-center gap-1"><span>👤</span> Reviewer: {paper.assigned_reviewer.name}</span>
                         )}
                       </div>
                     </div>
@@ -196,35 +210,15 @@ export default function MyPapersPage() {
                     {/* Action buttons column */}
                     <div className="flex sm:flex-col gap-2 flex-shrink-0 sm:min-w-[110px]">
                       {['pending', 'revision'].includes(paper.status) && (
-                        <Link
-                          to={`/my-papers/${paper.id}/edit`}
-                          className="btn btn-sm btn-outline w-full justify-center"
-                        >
-                          ✏️ Edit
-                        </Link>
+                        <Link to={`/my-papers/${paper.id}/edit`} className="btn btn-sm btn-outline w-full justify-center">✏️ Edit</Link>
                       )}
                       {paper.file_path && (
-                        <button
-                          onClick={() => paperService.download(paper.id, paper.file_name)}
-                          className="btn btn-sm btn-ghost w-full justify-center"
-                          title="Download PDF"
-                        >
-                          📄 PDF
-                        </button>
+                        <button onClick={() => paperService.download(paper.id, paper.file_name)} className="btn btn-sm btn-ghost w-full justify-center" title="Download PDF">📄 PDF</button>
                       )}
                       {paper.word_file_path && (
-                        <button
-                          onClick={() => paperService.downloadWord(paper.id, paper.word_file_name)}
-                          className="btn btn-sm btn-ghost text-primary w-full justify-center"
-                          title="Download Word"
-                        >
-                          📝 Word
-                        </button>
+                        <button onClick={() => paperService.downloadWord(paper.id, paper.word_file_name)} className="btn btn-sm btn-ghost text-primary w-full justify-center" title="Download Word">📝 Word</button>
                       )}
-                      <button
-                        onClick={() => setExpandedId(isExpanded ? null : paper.id)}
-                        className="btn btn-sm btn-ghost w-full justify-center text-gray-400"
-                      >
+                      <button onClick={() => setExpandedId(isExpanded ? null : paper.id)} className="btn btn-sm btn-ghost w-full justify-center text-gray-400">
                         {isExpanded ? '▲ Tutup' : '▼ Detail'}
                       </button>
                     </div>
@@ -237,27 +231,11 @@ export default function MyPapersPage() {
           {/* Pagination */}
           {meta && meta.last_page > 1 && (
             <div className="flex items-center justify-between pt-2">
-              <span className="text-sm text-gray-500">
-                {meta.from}–{meta.to} dari {meta.total} paper
-              </span>
+              <span className="text-sm text-gray-500">{meta.from}–{meta.to} dari {meta.total} paper</span>
               <div className="flex gap-2">
-                <button
-                  onClick={() => setPage(p => p - 1)}
-                  disabled={page === 1}
-                  className="btn btn-sm btn-ghost disabled:opacity-40"
-                >
-                  ← Prev
-                </button>
-                <span className="btn btn-sm bg-primary/10 text-primary cursor-default font-semibold">
-                  {page} / {meta.last_page}
-                </span>
-                <button
-                  onClick={() => setPage(p => p + 1)}
-                  disabled={page === meta.last_page}
-                  className="btn btn-sm btn-ghost disabled:opacity-40"
-                >
-                  Next →
-                </button>
+                <button onClick={() => setPage(p => p - 1)} disabled={page === 1} className="btn btn-sm btn-ghost disabled:opacity-40">← Prev</button>
+                <span className="btn btn-sm bg-primary/10 text-primary cursor-default font-semibold">{page} / {meta.last_page}</span>
+                <button onClick={() => setPage(p => p + 1)} disabled={page === meta.last_page} className="btn btn-sm btn-ghost disabled:opacity-40">Next →</button>
               </div>
             </div>
           )}

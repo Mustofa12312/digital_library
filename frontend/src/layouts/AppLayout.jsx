@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { getInitials, ROLE_LABELS } from '../utils/helpers'
 import toast from 'react-hot-toast'
+import NotificationBell from '../components/NotificationBell'
 
 const adminNav = [
   { to: '/dashboard', icon: '📊', label: 'Dashboard' },
@@ -78,15 +79,18 @@ export default function AppLayout({ children }) {
             </Link>
           ))}
 
-          {/* Public link */}
+          {/* Public publications link */}
           <div className="pt-2 border-t border-gray-100 mt-2">
+            {sidebarOpen && (
+              <div className="px-4 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Publik</div>
+            )}
             <Link
               to="/publications"
               className={`nav-link ${location.pathname === '/publications' ? 'active' : ''} ${!sidebarOpen ? 'justify-center px-2' : ''}`}
-              title={!sidebarOpen ? 'Publikasi' : ''}
+              title={!sidebarOpen ? 'Publikasi Ilmiah' : ''}
             >
               <span className="text-lg flex-shrink-0">🌐</span>
-              {sidebarOpen && <span className="truncate">Publikasi</span>}
+              {sidebarOpen && <span className="truncate">Publikasi Ilmiah</span>}
             </Link>
           </div>
         </nav>
@@ -142,6 +146,7 @@ export default function AppLayout({ children }) {
           </button>
 
           <div className="flex items-center gap-3">
+            <NotificationBell />
             <span className="text-sm text-gray-500">Selamat datang, <span className="font-semibold text-gray-800">{user?.name?.split(' ')[0]}</span></span>
             <div className={`badge-${user?.role} text-xs`}>
               {ROLE_LABELS[user?.role]}

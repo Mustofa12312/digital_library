@@ -25,19 +25,22 @@ export default function PaperManagementPage() {
   const [selectedReviewer, setSelectedReviewer] = useState('')
   const [deleteConfirm, setDeleteConfirm] = useState(null)
   const [detailModal, setDetailModal] = useState(null)
+  const [categoryFilter, setCategoryFilter] = useState('')
+
+  const CATEGORIES = ['', 'Computer Science', 'Information Systems', 'Software Engineering', 'Artificial Intelligence', 'Networking', 'Others']
 
   const debouncedSearch = useDebounce(search, 500)
 
   const fetchPapers = useCallback(() => {
     setLoading(true)
-    const params = { page, search: debouncedSearch, ...(statusFilter && { status: statusFilter }) }
+    const params = { page, search: debouncedSearch, ...(statusFilter && { status: statusFilter }), ...(categoryFilter && { category: categoryFilter }) }
     paperService.list(params)
       .then(res => {
         setPapers(res.data || res)
         setMeta(res) // res directly contains pagination data in Laravel
       })
       .finally(() => setLoading(false))
-  }, [page, debouncedSearch, statusFilter])
+  }, [page, debouncedSearch, statusFilter, categoryFilter])
 
   useEffect(() => { fetchPapers() }, [fetchPapers])
 
@@ -129,6 +132,16 @@ export default function PaperManagementPage() {
             <option value="">Semua Status</option>
             {STATUSES.filter(Boolean).map(s => (
               <option key={s} value={s}>{STATUS_LABELS[s]}</option>
+            ))}
+          </select>
+          <select
+            value={categoryFilter}
+            onChange={(e) => { setCategoryFilter(e.target.value); setPage(1) }}
+            className="form-select w-full sm:w-52"
+            id="paper-category-filter"
+          >
+            {CATEGORIES.map(cat => (
+              <option key={cat} value={cat}>{cat || 'Semua Kategori'}</option>
             ))}
           </select>
         </div>

@@ -149,6 +149,33 @@ export default function DashboardPage() {
               ))}
             </div>
           </div>
+
+          {/* Category Distribution */}
+          {data.category_distribution?.length > 0 && (
+            <div className="card card-body">
+              <h3 className="font-semibold text-gray-800 mb-4">🏷️ Distribusi Kategori Paper</h3>
+              <div className="space-y-3">
+                {data.category_distribution.map((item, i) => {
+                  const max = data.category_distribution[0]?.count || 1
+                  const pct = Math.round((item.count / max) * 100)
+                  return (
+                    <div key={i}>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-gray-600 font-medium">{item.category}</span>
+                        <span className="text-gray-400">{item.count} paper</span>
+                      </div>
+                      <div className="w-full bg-gray-100 rounded-full h-2">
+                        <div
+                          className="h-2 rounded-full bg-gradient-to-r from-primary to-secondary transition-all duration-700"
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </>
       )}
 

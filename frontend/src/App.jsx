@@ -18,6 +18,7 @@ import ReviewQueuePage from './pages/ReviewQueuePage'
 import PublicationsPage from './pages/PublicationsPage'
 import PublicationDetailPage from './pages/PublicationDetailPage'
 import ProfilePage from './pages/ProfilePage'
+import NotFoundPage from './pages/NotFoundPage'
 
 function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth()
@@ -115,8 +116,8 @@ function AppRoutes() {
         </ProtectedRoute>
       } />
 
-      {/* Redirects */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* 404 */}
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   )
 }
