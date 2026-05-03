@@ -55,6 +55,13 @@ class DashboardController extends Controller
         $recentPapers = Paper::with(['author'])->latest()->take(5)->get();
         $recentActivity = ActivityLog::with('user')->latest()->take(10)->get();
 
+        // Category distribution
+        $categoryDistribution = Paper::whereNotNull('category')
+            ->select('category', DB::raw('count(*) as count'))
+            ->groupBy('category')
+            ->orderByDesc('count')
+            ->get();
+
         return response()->json([
             'total_papers' => $totalPapers,
             'total_users' => $totalUsers,
@@ -62,6 +69,7 @@ class DashboardController extends Controller
             'status_counts' => $statusCounts,
             'submission_trend' => $submissionTrend,
             'acceptance_rate' => $acceptanceRate,
+            'category_distribution' => $categoryDistribution,
             'recent_papers' => $recentPapers,
             'recent_activity' => $recentActivity,
         ]);

@@ -8,6 +8,7 @@ use App\Models\PaperAuthor;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Notification;
 
 class PaperController extends Controller
 {
@@ -39,6 +40,10 @@ class PaperController extends Controller
             });
         }
 
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
         return response()->json(
             $query->latest()->paginate($request->get('per_page', 15))
         );
@@ -56,6 +61,10 @@ class PaperController extends Controller
                   ->orWhereRaw('LOWER(abstract) LIKE ?', ['%' . $searchTerm . '%'])
                   ->orWhereRaw('LOWER(keywords) LIKE ?', ['%' . $searchTerm . '%']);
             });
+        }
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
         }
 
         return response()->json(
@@ -122,6 +131,17 @@ class PaperController extends Controller
 
         ActivityLog::log('paper_submitted', "Paper '{$paper->title}' submitted", $paper);
 
+        // Notify all admins
+        \App\Models\User::where('role', 'admin')->orWhere('role', 'super_admin')->get()->each(function ($admin) use ($paper) {
+            Notification::notify(
+                $admin->id,
+                'paper_submitted',
+                'Paper Baru Disubmit',
+                "Paper \"" . $paper->title . "\" telah disubmit oleh {$paper->author->name}.",
+                '/papers'
+            );
+        });
+
         return response()->json($paper->load(['author', 'coAuthors']), 201);
     }
 
@@ -185,6 +205,25 @@ class PaperController extends Controller
 
         ActivityLog::log('paper_updated', "Paper '{$paper->title}' updated to status: {$paper->status}", $paper);
 
+        // Notify author when status changes
+        if ($request->has('status') && $paper->wasChanged('status')) {
+            $statusMessages = [
+                'accepted'     => '🎉 Paper Anda telah Diterima! Selamat.',
+                'rejected'     => '❌ Paper Anda Ditolak. Silakan lihat catatan dari reviewer.',
+                'revision'     => '📝 Paper Anda Perlu Direvisi. Mohon lakukan perbaikan.',
+                'under_review' => '🔍 Paper Anda sedang Direview oleh reviewer.',
+                'published'    => '🌐 Paper Anda telah Dipublikasikan!',
+            ];
+            $msg = $statusMessages[$paper->status] ?? "Status paper Anda berubah menjadi: {$paper->status}.";
+            Notification::notify(
+                $paper->author_id,
+                'paper_status_changed',
+                'Status Paper Diperbarui',
+                $msg . " (\"" . $paper->title . "\")" ,
+                '/my-papers'
+            );
+        }
+
         return response()->json($paper->load(['author', 'assignedReviewer', 'coAuthors']));
     }
 
@@ -219,6 +258,24 @@ class PaperController extends Controller
         ]);
 
         ActivityLog::log('reviewer_assigned', "Reviewer '{$reviewer->name}' assigned to paper '{$paper->title}'", $paper);
+
+        // Notify the assigned reviewer
+        Notification::notify(
+            $reviewer->id,
+            'reviewer_assigned',
+            'Anda Ditugaskan Sebagai Reviewer',
+            "Anda telah ditugaskan untuk mereview paper: \"" . $paper->title . "\".",
+            '/review-queue'
+        );
+
+        // Notify author
+        Notification::notify(
+            $paper->author_id,
+            'reviewer_assigned',
+            'Reviewer Telah Ditetapkan',
+            "Reviewer telah ditetapkan untuk paper Anda: \"" . $paper->title . "\".",
+            '/my-papers'
+        );
 
         // Simulate sending email to reviewer
         \Illuminate\Support\Facades\Log::info("EMAIL NOTIFICATION: Paper '{$paper->title}' assigned to Reviewer '{$reviewer->email}'.");

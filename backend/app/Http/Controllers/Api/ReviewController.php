@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Review;
 use App\Models\Paper;
 use App\Models\ActivityLog;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
@@ -71,6 +72,21 @@ class ReviewController extends Controller
         $paper->update(['status' => $statusMap[$request->decision]]);
 
         ActivityLog::log('review_submitted', "Review submitted for paper '{$paper->title}' with decision: {$request->decision}", $paper);
+
+        // Notify the author of the review
+        $decisionMessages = [
+            'accept'         => '🎉 Paper Anda mendapat keputusan: Diterima.',
+            'minor_revision' => '📝 Paper Anda memerlukan revisi minor.',
+            'major_revision' => '📝 Paper Anda memerlukan revisi mayor.',
+            'reject'         => '❌ Paper Anda mendapat keputusan: Ditolak.',
+        ];
+        Notification::notify(
+            $paper->author_id,
+            'review_submitted',
+            'Hasil Review Tersedia',
+            ($decisionMessages[$request->decision] ?? 'Review baru untuk paper Anda.') . " (\"" . $paper->title . "\")",
+            '/my-papers'
+        );
 
         return response()->json($review->load('reviewer'), 201);
     }
