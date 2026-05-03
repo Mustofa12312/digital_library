@@ -202,6 +202,15 @@ export default function PaperManagementPage() {
                               📥
                             </button>
                           )}
+                          {paper.word_file_path && (
+                            <button
+                              onClick={() => paperService.downloadWord(paper.id, paper.word_file_name)}
+                              className="btn btn-sm btn-ghost text-primary"
+                              title="Download Word"
+                            >
+                              📝
+                            </button>
+                          )}
                           <button
                             onClick={() => setDeleteConfirm(paper)}
                             className="btn btn-sm btn-danger"
@@ -305,14 +314,24 @@ export default function PaperManagementPage() {
                 <p className="text-gray-700">{detailModal.assigned_reviewer?.name || '-'}</p>
               </div>
             </div>
-            {detailModal.file_path && (
-              <button
-                onClick={() => paperService.download(detailModal.id, detailModal.file_name)}
-                className="btn-primary inline-flex"
-              >
-                📥 Download PDF
-              </button>
-            )}
+            <div className="flex gap-3">
+              {detailModal.file_path && (
+                <button
+                  onClick={() => paperService.download(detailModal.id, detailModal.file_name)}
+                  className="btn-primary inline-flex"
+                >
+                  📥 Download PDF
+                </button>
+              )}
+              {detailModal.word_file_path && (
+                <button
+                  onClick={() => paperService.downloadWord(detailModal.id, detailModal.word_file_name)}
+                  className="btn-outline border-primary text-primary hover:bg-primary hover:text-white inline-flex"
+                >
+                  📝 Download Word
+                </button>
+              )}
+            </div>
           </div>
         )}
       </Modal>

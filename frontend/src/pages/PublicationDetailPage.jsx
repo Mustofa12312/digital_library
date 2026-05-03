@@ -112,12 +112,23 @@ export default function PublicationDetailPage() {
           <div className="space-y-4">
             {paper.file_path && (
               <a
-                href={`/storage/${paper.file_path}`}
+                href={import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/publications/${paper.id}/download` : `/api/publications/${paper.id}/download`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-primary w-full justify-center"
               >
                 📥 Download PDF
+              </a>
+            )}
+
+            {paper.word_file_path && (
+              <a
+                href={import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/publications/${paper.id}/download-word` : `/api/publications/${paper.id}/download-word`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-outline w-full justify-center border-primary text-primary hover:bg-primary hover:text-white"
+              >
+                📝 Download Word
               </a>
             )}
 

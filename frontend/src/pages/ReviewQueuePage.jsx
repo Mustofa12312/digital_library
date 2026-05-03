@@ -13,6 +13,7 @@ export default function ReviewQueuePage() {
   const [queue, setQueue] = useState([])
   const [loading, setLoading] = useState(true)
   const [reviewModal, setReviewModal] = useState(null)
+  const [detailModal, setDetailModal] = useState(null)
   const [form, setForm] = useState({ comment: '', private_comment: '', decision: 'accept' })
   const [submitting, setSubmitting] = useState(false)
 
@@ -86,7 +87,14 @@ export default function ReviewQueuePage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-start gap-2 mb-2">
-                    <h3 className="font-semibold text-gray-900 flex-1">{paper.title}</h3>
+                    <h3 className="font-semibold text-gray-900 flex-1">
+                      <button 
+                        onClick={() => setDetailModal(paper)} 
+                        className="text-left hover:text-primary transition-colors focus:outline-none focus:underline"
+                      >
+                        {paper.title}
+                      </button>
+                    </h3>
                     <StatusBadge status={paper.status} />
                   </div>
                   <p className="text-sm text-gray-500 line-clamp-3 mb-3">{paper.abstract}</p>
@@ -112,7 +120,15 @@ export default function ReviewQueuePage() {
                     <button
                       onClick={() => paperService.download(paper.id, paper.file_name)}
                       className="btn btn-sm btn-ghost"
+                      title="Download PDF"
                     >📥 PDF</button>
+                  )}
+                  {paper.word_file_path && (
+                    <button
+                      onClick={() => paperService.downloadWord(paper.id, paper.word_file_name)}
+                      className="btn btn-sm btn-ghost text-primary"
+                      title="Download Word"
+                    >📝 Word</button>
                   )}
                   <button
                     onClick={() => openReviewModal(paper)}
@@ -127,6 +143,68 @@ export default function ReviewQueuePage() {
           ))}
         </div>
       )}
+
+      {/* Detail Modal */}
+      <Modal isOpen={!!detailModal} onClose={() => setDetailModal(null)} title="Detail Paper" size="lg">
+        {detailModal && (
+          <div className="space-y-4">
+            <div>
+              <h3 className="font-semibold text-gray-900 text-lg">{detailModal.title}</h3>
+              <div className="flex flex-wrap gap-2 mt-2">
+                <StatusBadge status={detailModal.status} />
+                <span className="badge bg-gray-100 text-gray-600">v{detailModal.version}</span>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-gray-400 uppercase mb-1">Abstrak</p>
+              <p className="text-sm text-gray-600 leading-relaxed text-justify">{detailModal.abstract}</p>
+            </div>
+            {detailModal.keywords && (
+              <div>
+                <p className="text-xs font-semibold text-gray-400 uppercase mb-1">Keywords</p>
+                <div className="flex flex-wrap gap-1">
+                  {detailModal.keywords.split(',').map((kw, i) => (
+                    <span key={i} className="px-2 py-0.5 bg-accent/20 text-amber-900 text-xs rounded-full">{kw.trim()}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-xs font-semibold text-gray-400 uppercase mb-1">Author Utama</p>
+                <p className="text-gray-700">{detailModal.author?.name}</p>
+                <p className="text-gray-500 text-xs">{detailModal.author?.institution}</p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-400 uppercase mb-1">Co-Authors</p>
+                <p className="text-gray-700">
+                  {detailModal.co_authors?.length > 0 
+                    ? detailModal.co_authors.map(ca => ca.name).join(', ') 
+                    : '-'}
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3 pt-2">
+              {detailModal.file_path && (
+                <button
+                  onClick={() => paperService.download(detailModal.id, detailModal.file_name)}
+                  className="btn-primary inline-flex"
+                >
+                  📥 Download PDF
+                </button>
+              )}
+              {detailModal.word_file_path && (
+                <button
+                  onClick={() => paperService.downloadWord(detailModal.id, detailModal.word_file_name)}
+                  className="btn-outline border-primary text-primary hover:bg-primary hover:text-white inline-flex"
+                >
+                  📝 Download Word
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </Modal>
 
       {/* Review Modal */}
       <Modal isOpen={!!reviewModal} onClose={() => setReviewModal(null)} title="Submit Review" size="lg">

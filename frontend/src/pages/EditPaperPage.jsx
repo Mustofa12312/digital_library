@@ -18,7 +18,9 @@ export default function EditPaperPage() {
     keywords: '',
   })
   const [file, setFile] = useState(null)
+  const [wordFile, setWordFile] = useState(null)
   const [dragOver, setDragOver] = useState(false)
+  const [wordDragOver, setWordDragOver] = useState(false)
 
   useEffect(() => {
     paperService.get(id).then(res => {
@@ -50,6 +52,17 @@ export default function EditPaperPage() {
     }
   }
 
+  const handleWordFileDrop = (e) => {
+    e.preventDefault()
+    setWordDragOver(false)
+    const droppedFile = e.dataTransfer.files[0]
+    if (droppedFile?.name.match(/\.(doc|docx)$/i) || droppedFile?.type.includes('word')) {
+      setWordFile(droppedFile)
+    } else {
+      toast.error('Hanya file Word (.doc, .docx) yang diizinkan')
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!form.title.trim() || !form.abstract.trim()) {
@@ -66,6 +79,7 @@ export default function EditPaperPage() {
       formData.append('abstract', form.abstract)
       formData.append('keywords', form.keywords)
       if (file) formData.append('file', file)
+      if (wordFile) formData.append('word_file', wordFile)
 
       await paperService.update(id, formData, (progressEvent) => {
         const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total)
@@ -178,6 +192,50 @@ export default function EditPaperPage() {
                     type="file"
                     accept=".pdf"
                     onChange={e => setFile(e.target.files[0])}
+                    className="hidden"
+                  />
+                </label>
+              </>
+            )}
+          </div>
+
+          <h2 className="font-semibold text-gray-800 mb-4 mt-6 flex items-center gap-2">
+            <span className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center text-sm">2b</span>
+            Upload Naskah Word Baru (Opsional)
+          </h2>
+          <p className="text-sm text-gray-500 mb-4">Abaikan jika tidak ada perubahan pada file Word.</p>
+
+          <div
+            onDragOver={(e) => { e.preventDefault(); setWordDragOver(true) }}
+            onDragLeave={() => setWordDragOver(false)}
+            onDrop={handleWordFileDrop}
+            className={`border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200 cursor-pointer
+              ${wordDragOver ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-primary/50 hover:bg-gray-50'}`}
+          >
+            {wordFile ? (
+              <div className="flex items-center justify-center gap-3">
+                <span className="text-3xl">📝</span>
+                <div className="text-left">
+                  <div className="font-medium text-gray-800">{wordFile.name}</div>
+                  <div className="text-sm text-gray-400">{(wordFile.size / 1024 / 1024).toFixed(2)} MB</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setWordFile(null)}
+                  className="ml-4 text-red-400 hover:text-red-600 transition-colors"
+                >✕</button>
+              </div>
+            ) : (
+              <>
+                <div className="text-4xl mb-3">📁</div>
+                <p className="text-gray-600 font-medium">Drop file Word di sini atau</p>
+                <label htmlFor="word-file-upload" className="cursor-pointer">
+                  <span className="text-primary hover:underline font-semibold">pilih file</span>
+                  <input
+                    id="word-file-upload"
+                    type="file"
+                    accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    onChange={e => setWordFile(e.target.files[0])}
                     className="hidden"
                   />
                 </label>

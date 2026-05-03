@@ -98,6 +98,13 @@ export default function MyPapersPage() {
                       title="Download PDF"
                     >📥 PDF</button>
                   )}
+                  {paper.word_file_path && (
+                    <button
+                      onClick={() => paperService.downloadWord(paper.id, paper.word_file_name)}
+                      className="btn btn-sm btn-ghost text-primary"
+                      title="Download Word"
+                    >📝 Word</button>
+                  )}
                   {['pending', 'revision'].includes(paper.status) && (
                     <Link to={`/my-papers/${paper.id}/edit`} className="btn btn-sm btn-outline">
                       ✏️ Edit

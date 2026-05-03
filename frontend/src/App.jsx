@@ -5,6 +5,7 @@ import { PageLoader } from './components/Loader'
 import AppLayout from './layouts/AppLayout'
 
 // Pages
+import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import PaperManagementPage from './pages/PaperManagementPage'
@@ -41,8 +42,19 @@ function AppRoutes() {
       <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
 
       {/* Public routes (no auth required) */}
-      <Route path="/publications" element={<PublicationsPage />} />
-      <Route path="/publications/:id" element={<PublicationDetailPage />} />
+      <Route path="/" element={<GuestRoute><LandingPage /></GuestRoute>} />
+
+      {/* Protected routes */}
+      <Route path="/publications" element={
+        <ProtectedRoute>
+          <PublicationsPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/publications/:id" element={
+        <ProtectedRoute>
+          <PublicationDetailPage />
+        </ProtectedRoute>
+      } />
 
       {/* Protected routes */}
       <Route path="/dashboard" element={
@@ -97,7 +109,6 @@ function AppRoutes() {
       } />
 
       {/* Redirects */}
-      <Route path="/" element={<Navigate to="/publications" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

@@ -112,7 +112,7 @@ export default function LoginPage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="form-input pl-11 bg-white/70 backdrop-blur-sm border-white/60 focus:bg-white transition-all shadow-sm rounded-xl py-3"
+                    className="form-input pl-11 bg-white/80 backdrop-blur-sm border-gray-200 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-sm hover:bg-white/90 rounded-xl py-3.5 w-full"
                     placeholder="nama@email.com"
                     required
                     autoComplete="email"
@@ -133,7 +133,7 @@ export default function LoginPage() {
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="form-input pl-11 pr-11 bg-white/70 backdrop-blur-sm border-white/60 focus:bg-white transition-all shadow-sm rounded-xl py-3"
+                    className="form-input pl-11 pr-11 bg-white/80 backdrop-blur-sm border-gray-200 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-sm hover:bg-white/90 rounded-xl py-3.5 w-full"
                     placeholder="••••••••"
                     required
                     autoComplete="current-password"
@@ -152,37 +152,20 @@ export default function LoginPage() {
                 type="submit"
                 id="btn-login"
                 disabled={loading}
-                className="btn-primary w-full justify-center py-3.5 rounded-xl text-base font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all mt-4"
+                className="btn-primary w-full flex items-center justify-center py-4 rounded-xl text-base font-bold shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-300 mt-8"
               >
                 {loading ? (
                   <>
                     <Spinner size="sm" />
-                    <span>Memproses...</span>
+                    <span className="ml-2">Memproses...</span>
                   </>
                 ) : 'Masuk ke Dashboard'}
               </button>
             </form>
 
-            {/* Demo accounts */}
-            <div className="mt-8 p-5 bg-white/40 backdrop-blur-md rounded-2xl border border-white/60 shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-accent/10 rounded-full blur-2xl"></div>
-              <p className="text-xs font-bold text-primary mb-3 flex items-center gap-2">
-                <span>🧪</span> Kredensial Demo:
-              </p>
-              <div className="space-y-1.5 text-xs text-gray-600 relative z-10">
-                <div className="flex justify-between items-center"><span className="font-medium">Super Admin:</span><span className="font-mono bg-white/50 px-2 py-0.5 rounded text-gray-800">superadmin@apms.com</span></div>
-                <div className="flex justify-between items-center"><span className="font-medium">Admin:</span><span className="font-mono bg-white/50 px-2 py-0.5 rounded text-gray-800">admin@apms.com</span></div>
-                <div className="flex justify-between items-center"><span className="font-medium">Reviewer:</span><span className="font-mono bg-white/50 px-2 py-0.5 rounded text-gray-800">reviewer1@apms.com</span></div>
-                <div className="flex justify-between items-center"><span className="font-medium">Author:</span><span className="font-mono bg-white/50 px-2 py-0.5 rounded text-gray-800">author1@apms.com</span></div>
-                <div className="flex justify-between items-center mt-3 pt-3 border-t border-white/50"><span className="font-medium">Password semua:</span><span className="font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">password</span></div>
-              </div>
-            </div>
 
-            <div className="mt-8 text-center">
-              <Link to="/publications" className="text-sm font-medium text-gray-500 hover:text-primary transition-colors flex items-center justify-center gap-1">
-                Lihat publikasi publik <span>→</span>
-              </Link>
-            </div>
+
+
           </div>
         </div>
       </div>

@@ -95,10 +95,19 @@ export default function PublicationsPage() {
               <Link key={paper.id} to={`/publications/${paper.id}`} className="card card-hover group">
                 <div className="card-body">
                   <div className="flex items-start gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-xl flex-shrink-0 group-hover:bg-primary/20 transition-colors">
-                      <button onClick={(e) => { e.preventDefault(); paperService.download(paper.id, `${paper.title}.pdf`, true) }} title="Download PDF">
-                        📥
-                      </button>
+                    <div className="flex items-center gap-1">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-xl flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+                        <button onClick={(e) => { e.preventDefault(); paperService.download(paper.id, `${paper.title}.pdf`, true) }} title="Download PDF">
+                          📥
+                        </button>
+                      </div>
+                      {paper.word_file_path && (
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-xl flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+                          <button onClick={(e) => { e.preventDefault(); paperService.downloadWord(paper.id, `${paper.title}.doc`, true) }} title="Download Word">
+                            📝
+                          </button>
+                        </div>
+                      )}
                     </div>
                     <div>
                       <span className="badge-published text-xs">Dipublikasikan</span>
