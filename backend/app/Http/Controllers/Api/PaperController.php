@@ -69,6 +69,7 @@ class PaperController extends Controller
             'title' => 'required|string|max:500',
             'abstract' => 'required|string',
             'keywords' => 'nullable|string|max:500',
+            'category' => 'nullable|string|max:255',
             'file' => 'nullable|file|mimes:pdf|max:20480', // 20MB max
             'word_file' => 'nullable|file|mimes:doc,docx|max:20480', // 20MB max
             'co_authors' => 'nullable|array',
@@ -96,6 +97,7 @@ class PaperController extends Controller
         $paper = Paper::create([
             'title' => $request->title,
             'abstract' => $request->abstract,
+            'category' => $request->category,
             'keywords' => $request->keywords,
             'file_path' => $filePath,
             'file_name' => $fileName,
@@ -150,6 +152,7 @@ class PaperController extends Controller
         $request->validate([
             'title' => 'sometimes|string|max:500',
             'abstract' => 'sometimes|string',
+            'category' => 'nullable|string|max:255',
             'keywords' => 'nullable|string|max:500',
             'file' => 'nullable|file|mimes:pdf|max:20480',
             'word_file' => 'nullable|file|mimes:doc,docx|max:20480',
@@ -177,7 +180,7 @@ class PaperController extends Controller
             $paper->word_file_path = $wordFile->store('papers/word', 'local');
         }
 
-        $paper->fill($request->only(['title', 'abstract', 'keywords', 'status', 'assigned_reviewer_id', 'admin_notes']));
+        $paper->fill($request->only(['title', 'abstract', 'category', 'keywords', 'status', 'assigned_reviewer_id', 'admin_notes']));
         $paper->save();
 
         ActivityLog::log('paper_updated', "Paper '{$paper->title}' updated to status: {$paper->status}", $paper);
@@ -271,5 +274,43 @@ class PaperController extends Controller
         }
 
         return Storage::disk('local')->download($paper->word_file_path, $paper->word_file_name);
+    }
+
+    public function exportCsv()
+    {
+        $papers = Paper::with(['author', 'assignedReviewer'])->orderBy('created_at', 'desc')->get();
+        $filename = 'papers_export_' . date('Y-m-d_H-i-s') . '.csv';
+        
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = ['ID', 'Judul', 'Kategori', 'Status', 'Author', 'Institusi', 'Reviewer', 'Tanggal Submit'];
+
+        $callback = function() use($papers, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($papers as $paper) {
+                $row = [
+                    $paper->id,
+                    $paper->title,
+                    $paper->category ?? '-',
+                    $paper->status,
+                    $paper->author ? $paper->author->name : '-',
+                    $paper->author ? $paper->author->institution : '-',
+                    $paper->assignedReviewer ? $paper->assignedReviewer->name : '-',
+                    $paper->created_at->format('Y-m-d H:i:s')
+                ];
+                fputcsv($file, $row);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

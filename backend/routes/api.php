@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\PaperController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\ProfileController;
 
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);
@@ -26,10 +27,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
 
+    // Profile
+    Route::put('/profile', [ProfileController::class, 'update']);
+    Route::get('/profile', [ProfileController::class, 'show']);
+
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
     // Papers - Author & above
+    Route::get('/papers/export', [PaperController::class, 'exportCsv'])
+        ->middleware('role:admin,super_admin');
     Route::get('/papers', [PaperController::class, 'index']);
     Route::get('/papers/{paper}', [PaperController::class, 'show']);
     Route::get('/papers/{paper}/download', [PaperController::class, 'download']);
