@@ -166,12 +166,12 @@ export default function LoginPage() {
             <div className="mt-6 text-center">
               <p className="text-xs text-gray-400">
                 Lupa kata sandi?{' '}
-                <a
-                  href="mailto:admin@apms.ac.id?subject=Reset%20Password%20Request"
+                <Link
+                  to="/forgot-password"
                   className="text-primary hover:underline font-medium"
                 >
-                  Hubungi administrator
-                </a>
+                  Klik di sini
+                </Link>
               </p>
             </div>
 

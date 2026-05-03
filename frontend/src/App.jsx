@@ -19,6 +19,8 @@ import PublicationsPage from './pages/PublicationsPage'
 import PublicationDetailPage from './pages/PublicationDetailPage'
 import ProfilePage from './pages/ProfilePage'
 import NotFoundPage from './pages/NotFoundPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
+import ResetPasswordPage from './pages/ResetPasswordPage'
 
 function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth()
@@ -42,6 +44,8 @@ function AppRoutes() {
     <Routes>
       {/* Guest routes */}
       <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
+      <Route path="/forgot-password" element={<GuestRoute><ForgotPasswordPage /></GuestRoute>} />
+      <Route path="/reset-password" element={<GuestRoute><ResetPasswordPage /></GuestRoute>} />
 
       {/* Public routes (no auth required) */}
       <Route path="/" element={<GuestRoute><LandingPage /></GuestRoute>} />
