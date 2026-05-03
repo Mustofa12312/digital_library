@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\NotificationController;
 
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/forgot-password', [\App\Http\Controllers\Api\PasswordResetController::class, 'forgotPassword']);
+Route::post('/reset-password', [\App\Http\Controllers\Api\PasswordResetController::class, 'resetPassword']);
 
 // Public papers listing (published only)
 Route::get('/publications', [PaperController::class, 'publicIndex']);
