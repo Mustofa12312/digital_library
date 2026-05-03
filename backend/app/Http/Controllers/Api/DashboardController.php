@@ -81,10 +81,18 @@ class DashboardController extends Controller
         $reviewed = Review::where('reviewer_id', $user->id)->count();
         $pending = Paper::where('assigned_reviewer_id', $user->id)->where('status', 'under_review')->count();
 
+        $recentAssignments = Paper::with(['author'])
+            ->where('assigned_reviewer_id', $user->id)
+            ->where('status', 'under_review')
+            ->latest()
+            ->take(5)
+            ->get();
+
         return response()->json([
             'total_assigned' => $assigned,
             'total_reviewed' => $reviewed,
             'pending_reviews' => $pending,
+            'recent_assignments' => $recentAssignments,
         ]);
     }
 
