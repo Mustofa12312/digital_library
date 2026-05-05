@@ -6,7 +6,7 @@ export default function LandingPage() {
   const [settings, setSettings] = useState(null)
 
   useEffect(() => {
-    systemService.getSettings().then(setSettings).catch(() => {})
+    systemService.getSettings().then(setSettings).catch(() => { })
   }, [])
 
   return (
@@ -18,7 +18,7 @@ export default function LandingPage() {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center shadow-lg shadow-primary/20">
               <span className="text-white font-bold text-lg">A</span>
             </div>
-            <span className="font-bold text-xl tracking-tight text-gray-900">APMS</span>
+            <span className="font-bold text-xl tracking-tight text-gray-900">ABDImu</span>
           </div>
           <div className="flex gap-4">
             <Link to="/login" className="btn-ghost hover:bg-gray-100 px-5 py-2.5 rounded-full font-medium transition-colors">
@@ -45,18 +45,18 @@ export default function LandingPage() {
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
             <span className="text-sm font-medium text-gray-600">Sistem Manajemen Publikasi Terpadu</span>
           </div>
-          
+
           <h1 className="text-5xl lg:text-7xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-8 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-            Transformasi Digital<br />
+            Platform Terintegrasi Penelitian dan<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-600">
-              Publikasi Ilmiah
+              Pengabdian Masyarakat IAMU
             </span>
           </h1>
-          
+
           <p className="text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
             {settings?.description || 'Tingkatkan kualitas, efisiensi, dan visibilitas penelitian institusi Anda melalui platform manajemen publikasi ilmiah yang modern dan terintegrasi.'}
           </p>
-          
+
           <div className="flex flex-col sm:flex-row justify-center gap-4 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
             <Link to="/login" className="bg-primary hover:bg-primary-600 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-xl shadow-primary/30 transition-all hover:-translate-y-1 hover:shadow-2xl flex items-center justify-center gap-2">
               Masuk ke Sistem <span className="text-xl">→</span>
@@ -72,7 +72,7 @@ export default function LandingPage() {
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Fitur Unggulan</h2>
             <p className="text-gray-500 max-w-2xl mx-auto text-lg">Semua alat yang Anda butuhkan untuk mengelola publikasi ilmiah dari tahap pengumpulan hingga penerbitan.</p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             {[
               { icon: '📝', title: 'Submit & Tracking Mudah', desc: 'Author dapat dengan mudah mengunggah paper dan memantau status setiap tahap review secara real-time.' },
@@ -98,10 +98,10 @@ export default function LandingPage() {
             <div className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center">
               <span className="text-white font-bold">A</span>
             </div>
-            <span className="font-bold text-white tracking-tight text-lg">{settings?.university_name || 'APMS'}</span>
+            <span className="font-bold text-white tracking-tight text-lg">{settings?.title || 'ABDImu'}</span>
           </div>
           <p className="text-gray-500 text-sm">
-            © {new Date().getFullYear()} Academic Publication Management System. All rights reserved.
+            © {new Date().getFullYear()} ABDImu. All rights reserved.
           </p>
         </div>
       </footer>
