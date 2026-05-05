@@ -12,10 +12,10 @@
 <body>
     <div className="container">
         <div className="header">
-            <h2>Reset Kata Sandi APMS</h2>
+            <h2>Reset Kata Sandi ABDImu</h2>
         </div>
         <p>Halo,</p>
-        <p>Anda menerima email ini karena kami menerima permintaan reset kata sandi untuk akun Anda di sistem <strong>Academic Publication Management System (APMS)</strong>.</p>
+        <p>Anda menerima email ini karena kami menerima permintaan reset kata sandi untuk akun Anda di sistem <strong>Platform Terintegrasi Penelitian dan Pengabdian Masyarakat IAIMU (ABDImu)</strong>.</p>
         <p>Silakan klik tombol di bawah ini untuk mengatur ulang kata sandi Anda:</p>
         
         <div style="text-align: center;">
@@ -26,7 +26,7 @@
         <p>Jika Anda tidak merasa melakukan permintaan ini, abaikan saja email ini.</p>
         
         <div className="footer">
-            <p>&copy; {{ date('Y') }} APMS - Institusi Pendidikan. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} ABDImu - Institut Agama Islam Miftahul Ulum (IAIMU). All rights reserved.</p>
         </div>
     </div>
 </body>

@@ -16,17 +16,17 @@ class DatabaseSeeder extends Seeder
         // Super Admin
         $superAdmin = User::create([
             'name' => 'Super Administrator',
-            'email' => 'superadmin@apms.com',
+            'email' => 'superadmin@abdimu.ac.id',
             'password' => Hash::make('password'),
             'role' => 'super_admin',
             'is_active' => true,
-            'institution' => 'APMS Institute',
+            'institution' => 'Institut Agama Islam Miftahul Ulum (IAIMU)',
         ]);
 
         // Admin
         $admin = User::create([
             'name' => 'Ahmad Fauzi',
-            'email' => 'admin@apms.com',
+            'email' => 'admin@abdimu.ac.id',
             'password' => Hash::make('password'),
             'role' => 'admin',
             'is_active' => true,
@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
         // Reviewers
         $reviewer1 = User::create([
             'name' => 'Dr. Siti Rahma',
-            'email' => 'reviewer1@apms.com',
+            'email' => 'reviewer1@abdimu.ac.id',
             'password' => Hash::make('password'),
             'role' => 'reviewer',
             'is_active' => true,
@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder
 
         $reviewer2 = User::create([
             'name' => 'Prof. Budi Santoso',
-            'email' => 'reviewer2@apms.com',
+            'email' => 'reviewer2@abdimu.ac.id',
             'password' => Hash::make('password'),
             'role' => 'reviewer',
             'is_active' => true,
@@ -57,7 +57,7 @@ class DatabaseSeeder extends Seeder
         // Authors
         $author1 = User::create([
             'name' => 'Mustofa Fikri',
-            'email' => 'author1@apms.com',
+            'email' => 'author1@abdimu.ac.id',
             'password' => Hash::make('password'),
             'role' => 'author',
             'is_active' => true,
@@ -66,7 +66,7 @@ class DatabaseSeeder extends Seeder
 
         $author2 = User::create([
             'name' => 'Dewi Lestari',
-            'email' => 'author2@apms.com',
+            'email' => 'author2@abdimu.ac.id',
             'password' => Hash::make('password'),
             'role' => 'author',
             'is_active' => true,
@@ -141,11 +141,11 @@ class DatabaseSeeder extends Seeder
         $this->command->info('✅ Database seeded successfully!');
         $this->command->info('');
         $this->command->info('📋 Test Accounts:');
-        $this->command->info('   Super Admin : superadmin@apms.com / password');
-        $this->command->info('   Admin       : admin@apms.com / password');
-        $this->command->info('   Reviewer 1  : reviewer1@apms.com / password');
-        $this->command->info('   Reviewer 2  : reviewer2@apms.com / password');
-        $this->command->info('   Author 1    : author1@apms.com / password');
-        $this->command->info('   Author 2    : author2@apms.com / password');
+        $this->command->info('   Super Admin : superadmin@abdimu.ac.id / password');
+        $this->command->info('   Admin       : admin@abdimu.ac.id / password');
+        $this->command->info('   Reviewer 1  : reviewer1@abdimu.ac.id / password');
+        $this->command->info('   Reviewer 2  : reviewer2@abdimu.ac.id / password');
+        $this->command->info('   Author 1    : author1@abdimu.ac.id / password');
+        $this->command->info('   Author 2    : author2@abdimu.ac.id / password');
     }
 }
