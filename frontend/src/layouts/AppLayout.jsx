@@ -59,7 +59,7 @@ export default function AppLayout({ children }) {
           </div>
           {sidebarOpen && (
             <div className="animate-fade-in overflow-hidden">
-              <div className="font-bold text-primary text-sm leading-tight">APMS</div>
+              <div className="font-bold text-primary text-sm leading-tight">ABDImu</div>
               <div className="text-xs text-gray-400 leading-tight">Jurnal Ilmiah</div>
             </div>
           )}

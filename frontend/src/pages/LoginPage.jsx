@@ -50,8 +50,8 @@ export default function LoginPage() {
                 <span className="text-2xl font-bold">A</span>
               </div>
               <div>
-                <div className="text-xl font-bold tracking-wider">APMS</div>
-                <div className="text-white/60 text-xs">Academic Publication Management</div>
+                <div className="text-xl font-bold tracking-wider">ABDImu</div>
+                <div className="text-white/60 text-xs">Platform Terintegrasi Penelitian dan Pengabdian Masyarakat IAIMU</div>
               </div>
             </div>
             
@@ -78,7 +78,7 @@ export default function LoginPage() {
           </div>
           
           <div className="relative z-10 text-xs text-white/40 mt-12">
-            © 2026 Academic Publication Management System
+            © 2026 ABDImu
           </div>
         </div>
 
@@ -90,7 +90,7 @@ export default function LoginPage() {
               <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-xl">A</span>
               </div>
-              <span className="font-bold text-gray-900 text-xl tracking-wider">APMS</span>
+              <span className="font-bold text-gray-900 text-xl tracking-wider">ABDImu</span>
             </div>
 
             <div className="mb-10">

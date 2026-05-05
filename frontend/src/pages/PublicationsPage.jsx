@@ -49,10 +49,10 @@ export default function PublicationsPage() {
               <div className="w-11 h-11 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20">
                 <span className="text-white font-bold">A</span>
               </div>
-              <span className="font-bold text-white/90 text-lg">{settings?.university_name || 'APMS'}</span>
+              <span className="font-bold text-white/90 text-lg">{settings?.university_name || 'ABDImu'}</span>
             </div>
             <Link to="/login" className="btn bg-white/15 text-white border border-white/25 hover:bg-white/25 backdrop-blur-sm">
-              Masuk ke APMS →
+              Masuk ke ABDImu →
             </Link>
           </div>
 

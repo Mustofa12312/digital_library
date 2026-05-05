@@ -49,7 +49,7 @@ export default function LandingPage() {
           <h1 className="text-5xl lg:text-7xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-8 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
             Platform Terintegrasi Penelitian dan<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-600">
-              Pengabdian Masyarakat IAMU
+              Pengabdian Masyarakat IAIMU
             </span>
           </h1>
 

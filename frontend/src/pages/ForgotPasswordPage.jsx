@@ -30,7 +30,7 @@ export default function ForgotPasswordPage() {
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center shadow-xl group-hover:scale-105 transition-all duration-300">
               <span className="text-white font-bold text-xl">A</span>
             </div>
-            <span className="font-bold text-2xl tracking-tight text-gray-900">APMS</span>
+            <span className="font-bold text-2xl tracking-tight text-gray-900">ABDImu</span>
           </Link>
           <h1 className="text-3xl font-black text-gray-900 tracking-tight">Lupa Kata Sandi? 🔑</h1>
           <p className="text-gray-500 mt-3 text-lg">Jangan panik! Hubungi tim pengembang kami untuk mendapatkan akses kembali ke akun Anda.</p>
@@ -54,7 +54,7 @@ export default function ForgotPasswordPage() {
               
               <div className="mt-6 flex flex-col sm:flex-row gap-3">
                 <a 
-                  href={`https://wa.me/${contact.wa}?text=Halo%20${contact.name},%20saya%20lupa%20kata%20sandi%20sistem%20APMS.%20Mohon%20bantuannya.`}
+                  href={`https://wa.me/${contact.wa}?text=Halo%20${contact.name},%20saya%20lupa%20kata%20sandi%20sistem%20ABDImu.%20Mohon%20bantuannya.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 bg-[#25D366] hover:bg-[#20ba5a] text-white py-3 px-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-green-200"

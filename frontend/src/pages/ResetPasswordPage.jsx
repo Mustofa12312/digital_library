@@ -56,7 +56,7 @@ export default function ResetPasswordPage() {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
               <span className="text-white font-bold text-lg">A</span>
             </div>
-            <span className="font-bold text-xl tracking-tight text-gray-900">APMS</span>
+            <span className="font-bold text-xl tracking-tight text-gray-900">ABDImu</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">Reset Kata Sandi</h1>
           <p className="text-gray-500 mt-2">Buat kata sandi baru untuk akun <span className="font-semibold text-gray-700">{form.email}</span></p>
