@@ -1,7 +1,7 @@
 📄 PRODUCT REQUIREMENTS DOCUMENT (PRD)
 🎯 Nama Produk
 
-Academic Publication Management System (APMS)
+Platform Terintegrasi Penelitian dan Pengabdian Masyarakat IAIMU (ABDImu)
 
 1. 🎯 OBJECTIVE
 

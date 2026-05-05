@@ -1,10 +1,10 @@
 #!/bin/bash
-# APMS Setup Script - Academic Publication Management System
+# ABDImu Setup Script - Platform Terintegrasi Penelitian dan Pengabdian Masyarakat IAIMU
 # Run: bash setup.sh
 
 set -e
 echo "========================================="
-echo "  APMS Setup - Backend + Frontend"
+echo "  ABDImu Setup - Backend + Frontend"
 echo "========================================="
 
 PROJECT_DIR=$(pwd)
