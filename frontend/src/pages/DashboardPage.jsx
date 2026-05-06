@@ -203,7 +203,7 @@ export default function DashboardPage() {
                       <div className="text-sm font-bold text-gray-800 truncate">{paper.title}</div>
                       <div className="text-xs text-gray-400 mt-0.5">Author: {paper.author?.name} · {formatDate(paper.created_at)}</div>
                     </div>
-                    <Link to="/review-queue" className="btn btn-sm btn-ghost text-primary">Review →</Link>
+                    <Link to="/review-queue" className="btn btn-sm btn-ghost text-primary hidden sm:inline-flex">Review →</Link>
                   </div>
                 ))}
               </div>
@@ -253,8 +253,8 @@ function StatCard({ icon, label, value, color }) {
     <div className="stat-card">
       <div className={`stat-icon ${color}`}>{icon}</div>
       <div>
-        <div className="text-2xl font-bold text-gray-900">{value}</div>
-        <div className="text-sm text-gray-500 mt-0.5">{label}</div>
+        <div className="text-xl sm:text-2xl font-bold text-gray-900">{value}</div>
+        <div className="text-xs sm:text-sm text-gray-500 mt-0.5">{label}</div>
       </div>
     </div>
   )

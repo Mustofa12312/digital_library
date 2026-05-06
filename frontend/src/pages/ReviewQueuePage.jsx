@@ -115,24 +115,24 @@ export default function ReviewQueuePage() {
                   )}
                 </div>
 
-                <div className="flex gap-2 flex-shrink-0">
+                <div className="flex flex-wrap gap-2 flex-shrink-0 w-full sm:w-auto mt-3 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-100">
                   {paper.file_path && (
                     <button
                       onClick={() => paperService.download(paper.id, paper.file_name)}
-                      className="btn btn-sm btn-ghost"
+                      className="btn btn-sm btn-ghost flex-1 sm:flex-none justify-center"
                       title="Download PDF"
                     >📥 PDF</button>
                   )}
                   {paper.word_file_path && (
                     <button
                       onClick={() => paperService.downloadWord(paper.id, paper.word_file_name)}
-                      className="btn btn-sm btn-ghost text-primary"
+                      className="btn btn-sm btn-ghost text-primary flex-1 sm:flex-none justify-center"
                       title="Download Word"
                     >📝 Word</button>
                   )}
                   <button
                     onClick={() => openReviewModal(paper)}
-                    className="btn btn-sm btn-primary"
+                    className="btn btn-sm btn-primary flex-1 sm:flex-none justify-center"
                     id={`btn-review-${paper.id}`}
                   >
                     ✍️ Review
@@ -169,7 +169,7 @@ export default function ReviewQueuePage() {
                 </div>
               </div>
             )}
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <div>
                 <p className="text-xs font-semibold text-gray-400 uppercase mb-1">Author Utama</p>
                 <p className="text-gray-700">{detailModal.author?.name}</p>
@@ -184,11 +184,11 @@ export default function ReviewQueuePage() {
                 </p>
               </div>
             </div>
-            <div className="flex gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2">
               {detailModal.file_path && (
                 <button
                   onClick={() => paperService.download(detailModal.id, detailModal.file_name)}
-                  className="btn-primary inline-flex"
+                  className="btn-primary justify-center"
                 >
                   📥 Download PDF
                 </button>
@@ -196,7 +196,7 @@ export default function ReviewQueuePage() {
               {detailModal.word_file_path && (
                 <button
                   onClick={() => paperService.downloadWord(detailModal.id, detailModal.word_file_name)}
-                  className="btn-outline border-primary text-primary hover:bg-primary hover:text-white inline-flex"
+                  className="btn-outline border-primary text-primary hover:bg-primary hover:text-white justify-center"
                 >
                   📝 Download Word
                 </button>
@@ -218,7 +218,7 @@ export default function ReviewQueuePage() {
             {/* Decision */}
             <div className="form-group">
               <label className="form-label">Keputusan Review *</label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {DECISIONS.map(d => (
                   <label
                     key={d}
@@ -268,9 +268,9 @@ export default function ReviewQueuePage() {
               />
             </div>
 
-            <div className="flex gap-3 justify-end pt-2 border-t border-gray-100">
-              <button type="button" onClick={() => setReviewModal(null)} className="btn-ghost">Batal</button>
-              <button type="submit" disabled={submitting} className="btn-primary" id="btn-submit-review">
+            <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 sm:justify-end pt-2 border-t border-gray-100">
+              <button type="button" onClick={() => setReviewModal(null)} className="btn-ghost w-full sm:w-auto justify-center">Batal</button>
+              <button type="submit" disabled={submitting} className="btn-primary w-full sm:w-auto justify-center" id="btn-submit-review">
                 {submitting ? 'Menyimpan...' : '🚀 Submit Review'}
               </button>
             </div>
