@@ -43,23 +43,23 @@ export default function PublicationsPage() {
           <div className="absolute -bottom-10 -left-10 w-60 h-60 rounded-full bg-white/5 blur-3xl" />
         </div>
 
-        <div className="relative max-w-6xl mx-auto px-6 py-16">
-          <div className="flex items-center justify-between mb-10">
-            <div className="flex items-center gap-4">
-              <div className="w-11 h-11 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20">
-                <span className="text-white font-bold">A</span>
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 sm:mb-10 gap-4">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20">
+                <span className="text-white font-bold text-sm sm:text-base">A</span>
               </div>
-              <span className="font-bold text-white/90 text-lg">{settings?.university_name || 'ABDImu'}</span>
+              <span className="font-bold text-white/90 text-base sm:text-lg">{settings?.university_name || 'ABDImu'}</span>
             </div>
-            <Link to="/login" className="btn bg-white/15 text-white border border-white/25 hover:bg-white/25 backdrop-blur-sm">
+            <Link to="/login" className="btn bg-white/15 text-white border border-white/25 hover:bg-white/25 backdrop-blur-sm w-full sm:w-auto justify-center">
               Masuk ke ABDImu →
             </Link>
           </div>
 
-          <h1 className="text-4xl lg:text-5xl font-black mb-3 leading-tight">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black mb-3 leading-tight">
             Publikasi Ilmiah 🌐
           </h1>
-          <p className="text-white/70 text-lg mb-8 max-w-xl">
+          <p className="text-white/70 text-base sm:text-lg mb-6 sm:mb-8 max-w-xl">
             {settings?.description || 'Kumpulan paper penelitian yang telah melalui proses peer review'}
           </p>
 
@@ -71,7 +71,7 @@ export default function PublicationsPage() {
               placeholder="Cari judul, abstrak, atau keyword..."
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1) }}
-              className="w-full bg-white/15 backdrop-blur-sm border border-white/30 rounded-2xl px-12 py-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 transition-all text-base shadow-lg"
+              className="w-full bg-white/15 backdrop-blur-sm border border-white/30 rounded-xl sm:rounded-2xl px-10 sm:px-12 py-3 sm:py-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 transition-all text-sm sm:text-base shadow-lg"
               id="publication-search"
             />
           </div>
@@ -79,7 +79,7 @@ export default function PublicationsPage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-6xl mx-auto px-6 py-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
         {/* Filters + stats bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div className="flex flex-wrap gap-2">
@@ -87,7 +87,7 @@ export default function PublicationsPage() {
               <button
                 key={cat}
                 onClick={() => { setCategory(cat); setPage(1) }}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all border ${
+                className={`px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all border ${
                   category === cat
                     ? 'bg-primary text-white border-primary shadow-sm shadow-primary/25'
                     : 'bg-white text-gray-600 border-gray-200 hover:border-primary/50 hover:text-primary'
@@ -131,7 +131,7 @@ export default function PublicationsPage() {
                 {/* Top accent */}
                 <div className="h-1.5 bg-gradient-to-r from-primary to-secondary" />
 
-                <div className="p-6 flex-1 flex flex-col">
+                <div className="p-4 sm:p-6 flex-1 flex flex-col">
                   {/* Category + published badge */}
                   <div className="flex items-center gap-2 mb-3 flex-wrap">
                     <span className="badge-published text-xs">✅ Dipublikasikan</span>
@@ -195,10 +195,10 @@ export default function PublicationsPage() {
 
         {/* Pagination */}
         {meta && meta.last_page > 1 && (
-          <div className="flex items-center justify-center gap-3 mt-12">
-            <button onClick={() => setPage(p => p - 1)} disabled={page === 1} className="btn btn-ghost border border-gray-200 disabled:opacity-40">← Sebelumnya</button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mt-8 sm:mt-12">
+            <button onClick={() => setPage(p => p - 1)} disabled={page === 1} className="btn btn-ghost border border-gray-200 disabled:opacity-40 w-full sm:w-auto justify-center">← Sebelumnya</button>
             <span className="text-sm text-gray-500 bg-white border border-gray-200 px-4 py-2 rounded-xl">Halaman {page} dari {meta.last_page}</span>
-            <button onClick={() => setPage(p => p + 1)} disabled={page === meta.last_page} className="btn btn-ghost border border-gray-200 disabled:opacity-40">Berikutnya →</button>
+            <button onClick={() => setPage(p => p + 1)} disabled={page === meta.last_page} className="btn btn-ghost border border-gray-200 disabled:opacity-40 w-full sm:w-auto justify-center">Berikutnya →</button>
           </div>
         )}
       </div>

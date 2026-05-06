@@ -37,7 +37,7 @@ export default function LoginPage() {
       </div>
 
       {/* Glass Container */}
-      <div className="relative z-10 flex flex-col lg:flex-row w-full max-w-[1100px] mx-6 rounded-[2.5rem] bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.08)] overflow-hidden">
+      <div className="relative z-10 flex flex-col lg:flex-row w-full max-w-[1100px] mx-4 sm:mx-6 rounded-2xl sm:rounded-[2.5rem] bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.08)] overflow-hidden">
         
         {/* Left Side (Features) */}
         <div className="hidden lg:flex lg:w-[45%] p-12 flex-col justify-between bg-primary/95 text-white relative overflow-hidden">
@@ -83,7 +83,7 @@ export default function LoginPage() {
         </div>
 
         {/* Right Side (Form) */}
-        <div className="flex-1 p-8 lg:p-16 flex flex-col justify-center bg-white/50 relative">
+        <div className="flex-1 p-6 sm:p-8 lg:p-16 flex flex-col justify-center bg-white/50 relative">
           <div className="w-full max-w-md mx-auto relative z-10">
             {/* Mobile logo */}
             <div className="flex items-center gap-3 mb-8 lg:hidden">
@@ -93,9 +93,9 @@ export default function LoginPage() {
               <span className="font-bold text-gray-900 text-xl tracking-wider">ABDImu</span>
             </div>
 
-            <div className="mb-10">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Masuk ke Akun</h2>
-              <p className="text-gray-500">Gunakan kredensial yang telah diberikan oleh institusi</p>
+            <div className="mb-6 sm:mb-10">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Masuk ke Akun</h2>
+              <p className="text-sm sm:text-base text-gray-500">Gunakan kredensial yang telah diberikan oleh institusi</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -152,7 +152,7 @@ export default function LoginPage() {
                 type="submit"
                 id="btn-login"
                 disabled={loading}
-                className="btn-primary w-full flex items-center justify-center py-4 rounded-xl text-base font-bold shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-300 mt-8"
+                className="btn-primary w-full flex items-center justify-center py-3.5 sm:py-4 rounded-xl text-base font-bold shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-300 mt-6 sm:mt-8"
               >
                 {loading ? (
                   <>
