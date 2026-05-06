@@ -5,15 +5,15 @@ export default function ForgotPasswordPage() {
     {
       name: 'Mustofa (Lead Developer)',
       role: 'Sistem & Database',
-      phone: '+62 812-3456-7890',
-      wa: '6281234567890',
+      phone: '+62 813-5908-8246',
+      wa: '6281359088246',
       icon: '👨‍💻'
     },
     {
-      name: 'Tim Support',
+      name: 'Pak Ziyadan (Tim Support)',
       role: 'UI/UX & Troubleshooting',
-      phone: '+62 898-7654-3210',
-      wa: '6289876543210',
+      phone: '+62 878-5024-5888',
+      wa: '6287850245888',
       icon: '🛡️'
     }
   ]
@@ -38,8 +38,8 @@ export default function ForgotPasswordPage() {
 
         <div className="grid gap-4">
           {contacts.map((contact, i) => (
-            <div 
-              key={i} 
+            <div
+              key={i}
               className="group bg-white rounded-[2rem] p-6 shadow-xl shadow-gray-200/50 border border-white hover:border-primary/30 transition-all duration-300 hover:-translate-y-1"
             >
               <div className="flex items-center gap-5">
@@ -51,9 +51,9 @@ export default function ForgotPasswordPage() {
                   <p className="text-sm text-primary font-semibold uppercase tracking-wider">{contact.role}</p>
                 </div>
               </div>
-              
+
               <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                <a 
+                <a
                   href={`https://wa.me/${contact.wa}?text=Halo%20${contact.name},%20saya%20lupa%20kata%20sandi%20sistem%20ABDImu.%20Mohon%20bantuannya.`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -61,7 +61,7 @@ export default function ForgotPasswordPage() {
                 >
                   <span>💬</span> WhatsApp
                 </a>
-                <a 
+                <a
                   href={`tel:${contact.phone}`}
                   className="flex-1 bg-gray-900 hover:bg-gray-800 text-white py-3 px-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-gray-200"
                 >
@@ -73,8 +73,8 @@ export default function ForgotPasswordPage() {
         </div>
 
         <div className="mt-10 text-center">
-          <Link 
-            to="/login" 
+          <Link
+            to="/login"
             className="inline-flex items-center gap-2 text-gray-400 hover:text-primary transition-colors font-medium px-6 py-2 rounded-full border border-gray-100 bg-white shadow-sm"
           >
             ← Kembali ke Login
